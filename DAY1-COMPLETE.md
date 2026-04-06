@@ -68,7 +68,9 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
 
 ### 3. Deploy to Vercel (5 minutes)
 
-#### Option A: Using Vercel CLI (Recommended)
+**Important:** We've initialized Git locally but haven't created a GitHub repository yet. You have two options:
+
+#### Option A: Deploy Directly with Vercel CLI (Quickest)
 ```bash
 # Install Vercel CLI globally
 npm install -g vercel
@@ -85,26 +87,35 @@ vercel
 # - Override settings? No
 ```
 
-#### Option B: Using Vercel Dashboard
-1. Push your code to GitHub:
+This deploys directly without needing GitHub.
+
+#### Option B: Create GitHub Repo + Deploy via Vercel Dashboard
+1. Create a new repository on GitHub:
+   - Go to [github.com/new](https://github.com/new)
+   - Repository name: `water-tracker-pwa`
+   - Keep it Public or Private
+   - Do NOT initialize with README (we already have files)
+   - Click "Create repository"
+
+2. Push your code to GitHub:
    ```bash
-   # Create a new repository on GitHub first
-   git remote add origin https://github.com/yourusername/water-tracker-pwa.git
+   git remote add origin https://github.com/YOUR_USERNAME/water-tracker-pwa.git
    git branch -M main
    git push -u origin main
    ```
 
-2. Go to [vercel.com](https://vercel.com) and sign in
-3. Click "New Project"
-4. Import your GitHub repository
-5. Configure:
-   - **Framework Preset**: Vite
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-6. Add Environment Variables in Vercel dashboard:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-7. Click "Deploy"
+3. Deploy via Vercel:
+   - Go to [vercel.com](https://vercel.com) and sign in
+   - Click "New Project"
+   - Import your GitHub repository
+   - Configure:
+     - **Framework Preset**: Vite
+     - **Build Command**: `npm run build`
+     - **Output Directory**: `dist`
+   - Add Environment Variables:
+     - `VITE_SUPABASE_URL`
+     - `VITE_SUPABASE_ANON_KEY`
+   - Click "Deploy"
 
 ### 4. Test PWA Install (2 minutes)
 1. Open your deployed URL on a mobile device

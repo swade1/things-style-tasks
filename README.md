@@ -1,53 +1,89 @@
-# React + TypeScript + Vite
+# 💧 Water Tracker PWA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A professional, mobile-first Progressive Web App for tracking daily water intake. Built with modern web technologies and designed for offline-first usage.
 
-Currently, two official plugins are available:
+## 🚀 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Frontend**: Vite + React 18 + TypeScript
+- **Styling**: Tailwind CSS v4 + shadcn/ui utilities
+- **Backend**: Supabase (Database, Auth, Storage)
+- **PWA**: Vite PWA Plugin + Workbox
+- **Deployment**: Vercel
+- **Icons**: Lucide React
 
-## React Compiler
+## ✨ Features (Planned)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- ✅ Quick water intake logging
+- ✅ Daily goal tracking
+- ✅ Streak counter
+- ✅ Water history and analytics
+- ✅ Push notifications for reminders
+- ✅ Offline support with sync
+- ✅ Dark mode
+- ✅ Mobile-optimized UI (48px+ touch targets)
+- ✅ PWA installable on mobile devices
 
-## Expanding the ESLint configuration
+## 📦 Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Set up environment variables
+cp .env.example .env
+# Add your Supabase credentials to .env
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Start development server
+npm run dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🔧 Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
+Create a `.env` file with:
+
+```env
+VITE_SUPABASE_URL=your-supabase-project-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+## 📱 Development
+
+This project follows a 7-day implementation plan. See [PLAN.md](./PLAN.md) for the complete roadmap.
+
+### Day 1 Status: ✅ Complete
+- Setup and scaffolding
+- PWA foundation
+- Development environment ready
+
+See [DAY1-COMPLETE.md](./DAY1-COMPLETE.md) for deployment instructions.
+
+## 🏗️ Project Structure
+
+```
+src/
+├── components/     # React components
+├── lib/            # Utilities and configs
+│   ├── supabase.ts # Supabase client
+│   └── utils.ts    # Utility functions
+├── pages/          # Page components
+├── hooks/          # Custom React hooks
+├── types/          # TypeScript type definitions
+└── utils/          # Helper functions
+```
+
+## 🔐 License
+
+MIT
+
+## 👤 Author
+
+Built as part of a 7-day PWA challenge.
 import reactDom from 'eslint-plugin-react-dom'
 
 export default defineConfig([

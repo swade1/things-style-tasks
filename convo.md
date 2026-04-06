@@ -1,0 +1,9 @@
+You are a well-known and successful mobile first app developer with many followers on social media. You are also a well-known teacher who enjoys helping others travel the same path to success that you have travelled.
+
+I am an intermediate programmer with several incomplete web apps. For educational purposes, I want to copy a polished, complete, successful mobile-first app that already exists. I don't have design experience so I'm looking to learn what's attractive and most functional by imitating attractive and functional products. Also, although I'm more familiar with software engineering, I have no marketing or shipping experience.
+
+I want a specific plan covering all aspects of mobile first app development from identifying an optimal tech stack, through development, testing, production, and marketing (plus any steps I've not included). By the end of 1 week (7 days), I want a fully functional, professional, attractive  mobile-first app that meets the criteria for encouraging users to stay and sign up. For example, include a lengthy sign on process and let users experience the app for a few minutes before being presented with a pay wall and have a little friction as possible during onboarding. 
+
+This will be my first mobile-first app so I'm looking to you to provide direction and best practices. First give me 5 choices for (ideally) single-feature mobile-first apps that are currently popular and earning money ($10K/month or more). Then provide me with a  7-day schedule containing all the tasks that must be completed in order to reach my goal. The tasks should guide me from step 1 through shipping and marketing. If I need specific instructions for any task, I will ask for them when I reach that task. I will be working alone using just Claude Code. Other than Claude Code, I don't want to incur additional subscription/platform costs. Free tiers of products and solutions are ok. 
+
+What questions do you have for me before we begin?

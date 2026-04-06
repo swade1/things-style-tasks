@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -43,18 +41,19 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 /* Mobile-first: Ensure minimum touch target sizes */
-@layer utilities {
-  .touch-target {
-    @apply min-h-[48px] min-w-[48px];
-  }
+.touch-target {
+  min-height: 48px;
+  min-width: 48px;
 }
+
 

@@ -43,10 +43,24 @@
   * {
     border-color: hsl(var(--border));
   }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
   body {
-    background: hsl(var(--background));
+    background:
+      radial-gradient(circle at top, rgba(255, 255, 255, 0.95) 0%, rgba(244, 247, 251, 0.92) 35%, rgba(236, 241, 247, 0.95) 100%);
     color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: rgba(59, 130, 246, 0.18);
   }
 }
 

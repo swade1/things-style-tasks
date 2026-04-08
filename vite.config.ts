@@ -11,11 +11,11 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icon-192.svg', 'icon-512.svg'],
       manifest: {
-        name: 'Water Tracker',
-        short_name: 'Water',
-        description: 'Track your daily water intake and stay hydrated',
+        name: 'Things-Style Tasks',
+        short_name: 'Tasks',
+        description: 'A polished Things-inspired task manager for planning today, anytime, and upcoming work.',
         theme_color: '#3b82f6',
-        background_color: '#ffffff',
+        background_color: '#f8fafc',
         display: 'standalone',
         icons: [
           {
@@ -55,4 +55,34 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+
+          if (id.includes('/react/') || id.includes('/react-dom/')) {
+            return 'vendor-react'
+          }
+
+          if (id.includes('framer-motion')) {
+            return 'vendor-motion'
+          }
+
+          if (id.includes('@supabase')) {
+            return 'vendor-supabase'
+          }
+
+          if (
+            id.includes('lucide-react') ||
+            id.includes('clsx') ||
+            id.includes('tailwind-merge') ||
+            id.includes('class-variance-authority')
+          ) {
+            return 'vendor-ui'
+          }
+        }
+      }
+    }
+  }
 })

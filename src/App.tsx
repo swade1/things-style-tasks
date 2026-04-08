@@ -1,89 +1,232 @@
-import { useState } from 'react'
-import { Droplet, Plus } from 'lucide-react'
+import { Suspense, lazy, useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Loader2 } from 'lucide-react'
+import { BottomTabNavigation } from '@/components'
+import { useAuth, useTasks, useProjects } from '@/hooks'
+import type { Task, ViewType } from '@/types'
 import './App.css'
 
-function App() {
-  const [waterIntake, setWaterIntake] = useState(0)
-  const dailyGoal = 2000 // ml
-  const progress = Math.min((waterIntake / dailyGoal) * 100, 100)
+const AuthScreen = lazy(async () => {
+  const module = await import('@/components/AuthScreen')
+  return { default: module.AuthScreen }
+})
 
-  const addWater = (amount: number) => {
-    setWaterIntake(prev => prev + amount)
+const GlobalSearchSheet = lazy(async () => {
+  const module = await import('@/components/GlobalSearchSheet')
+  return { default: module.GlobalSearchSheet }
+})
+
+const TodayView = lazy(async () => {
+  const module = await import('@/pages/TodayView')
+  return { default: module.TodayView }
+})
+
+const AnytimeView = lazy(async () => {
+  const module = await import('@/pages/AnytimeView')
+  return { default: module.AnytimeView }
+})
+
+const UpcomingView = lazy(async () => {
+  const module = await import('@/pages/UpcomingView')
+  return { default: module.UpcomingView }
+})
+
+const ProjectsView = lazy(async () => {
+  const module = await import('@/pages/ProjectsView')
+  return { default: module.ProjectsView }
+})
+
+const viewLoadingFallback = (
+  <div className="absolute inset-0 flex items-center justify-center bg-transparent">
+    <Loader2 className="w-7 h-7 text-blue-600 animate-spin" />
+  </div>
+)
+
+function AuthenticatedApp() {
+  const [activeView, setActiveView] = useState<ViewType>('today')
+  const [direction, setDirection] = useState<'left' | 'right'>('right')
+  const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false)
+  const [focusedTask, setFocusedTask] = useState<{ taskId: string; view: Exclude<ViewType, 'projects'> } | null>(null)
+
+  // Fetch task counts for badges
+  const { tasks: todayTasks } = useTasks('today')
+  const { tasks: anytimeTasks } = useTasks('anytime')
+  const { tasks: upcomingTasks } = useTasks('upcoming')
+  const { projects } = useProjects('active')
+
+  // Determine view order for slide direction
+  const viewOrder: ViewType[] = ['today', 'anytime', 'upcoming', 'projects']
+
+  const handleTabChange = (newView: ViewType) => {
+    const currentIndex = viewOrder.indexOf(activeView)
+    const newIndex = viewOrder.indexOf(newView)
+    setDirection(newIndex > currentIndex ? 'left' : 'right')
+    setActiveView(newView)
+  }
+
+  const openGlobalSearch = () => setIsGlobalSearchOpen(true)
+  const closeGlobalSearch = () => setIsGlobalSearchOpen(false)
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        setIsGlobalSearchOpen(prev => !prev)
+      }
+
+      if (event.key === 'Escape') {
+        setIsGlobalSearchOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  const handleSearchTaskSelect = (task: Task) => {
+    const targetView: Exclude<ViewType, 'projects'> =
+      task.status === 'today'
+        ? 'today'
+        : task.status === 'upcoming'
+          ? 'upcoming'
+          : 'anytime'
+
+    setFocusedTask({ taskId: task.id, view: targetView })
+    closeGlobalSearch()
+
+    if (activeView !== targetView) {
+      handleTabChange(targetView)
+    }
+  }
+
+  // Slide variants for view transitions
+  const slideVariants = {
+    enter: (direction: 'left' | 'right') => ({
+      x: direction === 'left' ? '100%' : '-100%',
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: 'left' | 'right') => ({
+      x: direction === 'left' ? '-100%' : '100%',
+      opacity: 0
+    })
+  }
+
+  const renderView = () => {
+    switch (activeView) {
+      case 'today':
+        return (
+          <TodayView
+            onOpenSearch={openGlobalSearch}
+            focusTaskId={focusedTask?.view === 'today' ? focusedTask.taskId : null}
+            onFocusHandled={() => setFocusedTask(null)}
+          />
+        )
+      case 'anytime':
+        return (
+          <AnytimeView
+            onOpenSearch={openGlobalSearch}
+            focusTaskId={focusedTask?.view === 'anytime' ? focusedTask.taskId : null}
+            onFocusHandled={() => setFocusedTask(null)}
+          />
+        )
+      case 'upcoming':
+        return (
+          <UpcomingView
+            onOpenSearch={openGlobalSearch}
+            focusTaskId={focusedTask?.view === 'upcoming' ? focusedTask.taskId : null}
+            onFocusHandled={() => setFocusedTask(null)}
+          />
+        )
+      case 'projects':
+        return <ProjectsView onOpenSearch={openGlobalSearch} />
+      default:
+        return <TodayView onOpenSearch={openGlobalSearch} />
+    }
   }
 
   return (
-    <div className="app">
-      <header className="header">
-        <div className="header-content">
-          <Droplet className="logo" size={32} />
-          <h1>Water Tracker</h1>
-        </div>
-      </header>
-
-      <main className="main">
-        <div className="tracker-card">
-          <h2 className="tracker-title">Today's Progress</h2>
-          
-          <div className="water-display">
-            <div className="water-amount">{waterIntake}</div>
-            <div className="water-unit">ml / {dailyGoal} ml</div>
-          </div>
-
-          <div className="progress-bar">
-            <div 
-              className="progress-fill" 
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-
-          <div className="quick-add">
-            <button 
-              className="add-button"
-              onClick={() => addWater(250)}
+    <div className="h-screen flex flex-col">
+      {/* Main content */}
+      <div className="flex-1 overflow-hidden relative">
+        <Suspense fallback={viewLoadingFallback}>
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={activeView}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: 'tween', ease: 'easeInOut', duration: 0.3 },
+                opacity: { duration: 0.2 }
+              }}
+              className="absolute inset-0"
             >
-              <Plus size={20} />
-              250ml
-            </button>
-            <button 
-              className="add-button"
-              onClick={() => addWater(500)}
-            >
-              <Plus size={20} />
-              500ml
-            </button>
-            <button 
-              className="add-button"
-              onClick={() => addWater(750)}
-            >
-              <Plus size={20} />
-              750ml
-            </button>
-          </div>
+              {renderView()}
+            </motion.div>
+          </AnimatePresence>
+        </Suspense>
+      </div>
 
-          {waterIntake >= dailyGoal && (
-            <div className="success-message">
-              🎉 Goal achieved! Great job staying hydrated!
-            </div>
-          )}
-        </div>
+      {isGlobalSearchOpen && (
+        <Suspense fallback={null}>
+          <GlobalSearchSheet
+            isOpen={isGlobalSearchOpen}
+            onClose={closeGlobalSearch}
+            onSelectTask={handleSearchTaskSelect}
+          />
+        </Suspense>
+      )}
 
-        <div className="info-card">
-          <h3>Day 1 Setup Complete ✅</h3>
-          <ul className="feature-list">
-            <li>✅ PWA Foundation</li>
-            <li>✅ Tailwind CSS Configured</li>
-            <li>✅ Supabase Client Ready</li>
-            <li>⏳ Database Schema (Day 2)</li>
-            <li>⏳ Authentication (Day 2)</li>
-            <li>⏳ Data Persistence (Day 2)</li>
-          </ul>
-          <p className="note">
-            This is a Day 1 preview. Full functionality coming in Day 2!
-          </p>
-        </div>
-      </main>
+      {/* Bottom navigation */}
+      <BottomTabNavigation
+        activeTab={activeView}
+        onTabChange={handleTabChange}
+        todayCount={todayTasks.filter(t => t.status !== 'completed').length}
+        anytimeCount={anytimeTasks.filter(t => t.status !== 'completed').length}
+        upcomingCount={upcomingTasks.filter(t => t.status !== 'completed').length}
+        projectsCount={projects.length}
+      />
     </div>
   )
+}
+
+function App() {
+  const { user, loading, error, signIn, signUp } = useAuth()
+
+  if (loading && !user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+          </div>
+        }
+      >
+        <AuthScreen
+          loading={loading}
+          error={error}
+          onSignIn={signIn}
+          onSignUp={signUp}
+        />
+      </Suspense>
+    )
+  }
+
+  return <AuthenticatedApp />
 }
 
 export default App

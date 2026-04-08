@@ -1,143 +1,9 @@
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+/* Shared app polish */
 
-.header {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.header-content {
-  max-width: 600px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.logo {
-  color: white;
-}
-
-.header h1 {
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.main {
-  flex: 1;
-  padding: 2rem 1rem;
-  max-width: 600px;
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.tracker-card {
-  background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.tracker-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 1.5rem 0;
-}
-
-.water-display {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.water-amount {
-  font-size: 3.5rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.water-unit {
-  font-size: 1rem;
-  color: #6b7280;
-  margin-top: 0.5rem;
-}
-
-.progress-bar {
-  background: #e5e7eb;
-  height: 12px;
-  border-radius: 9999px;
-  overflow: hidden;
-  margin-bottom: 2rem;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  transition: width 0.5s ease;
-  border-radius: 9999px;
-}
-
-.quick-add {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-}
-
-.add-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  min-height: 48px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.add-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-}
-
-.add-button:active {
-  transform: translateY(0);
-}
-
-.success-message {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  text-align: center;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  animation: slideIn 0.5s ease;
-}
-
-@keyframes slideIn {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -145,60 +11,38 @@
   }
 }
 
-.info-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+body > #root > div {
+  animation: fadeIn 0.6s ease-out;
 }
 
-.info-card h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 1rem 0;
+.things-screen {
+  background:
+    linear-gradient(180deg, rgba(248, 250, 252, 0.96) 0%, rgba(239, 244, 249, 0.95) 100%);
 }
 
-.feature-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1rem 0;
+.things-surface {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
 }
 
-.feature-list li {
-  padding: 0.5rem 0;
-  color: #4b5563;
-  font-size: 0.95rem;
+.things-sheet {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
 }
 
-.note {
-  margin: 0;
-  padding: 0.75rem;
-  background: #fef3c7;
-  border-left: 4px solid #f59e0b;
-  border-radius: 0.5rem;
-  color: #92400e;
-  font-size: 0.875rem;
+.things-fab {
+  box-shadow:
+    0 14px 30px rgba(37, 99, 235, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-@media (max-width: 640px) {
-  .main {
-    padding: 1rem;
-  }
-
-  .tracker-card {
-    padding: 1.5rem;
-  }
-
-  .water-amount {
-    font-size: 2.5rem;
-  }
-
-  .quick-add {
-    grid-template-columns: 1fr;
-  }
-
-  .add-button {
-    flex-direction: row;
-  }
+.things-empty-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.92));
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
 }
+

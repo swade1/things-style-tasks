@@ -1,562 +1,740 @@
-# 7-Day Water Tracker PWA - Complete Implementation Plan
+# Things 3 Clone - 7-Day Implementation Plan
 
-## TL;DR
-Build a professional, mobile-first water tracking PWA using Vite + React + TypeScript + Tailwind + Supabase. Deploy to Vercel's free tier. Features: quick logging, daily goals, streaks, history, push notifications, offline support. Freemium monetization (premium after 7 days). Timeline: 7 days from zero to production with marketing launch.
+## Overview
+**Educational Clone**: Build a Things 3-inspired task management PWA to study professional mobile-first design patterns, smooth animations, and task management architecture.
 
-## Tech Stack (Final)
+**Reference App**: [Things 3](https://culturedcode.com/things/) by Cultured Code - 2x Apple Design Award winner ($9.99 iPhone)
+
+**Purpose**: Learning exercise only. Study professional UI/UX patterns, not for commercial use.
+
+## Tech Stack (Already Set Up ✅)
 - **Frontend**: Vite + React 18 + TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui components
-- **Backend**: Supabase (PostgreSQL, Auth, Storage - free tier 500MB)
-- **Charts**: Recharts (lightweight ~60KB)
+- **Styling**: Tailwind CSS v4 (perfect for Things' clean design)
+- **Animations**: Framer Motion (for Things-like smooth transitions)
+- **Backend**: Supabase (PostgreSQL, Auth, Realtime)
 - **Offline**: Workbox (service worker + IndexedDB)
-- **Notifications**: Firebase Cloud Messaging (free tier)
-- **Hosting**: Vercel (free tier - 100GB bandwidth/month)
-- **Domain**: Vercel subdomain (free) or Namecheap .xyz ($1-2/year)
-- **Analytics**: Vercel Analytics + Plausible (free tier)
-- **Payments**: Stripe (if implementing premium tier)
+- **Hosting**: Vercel (free tier)
+- **Icons**: Lucide React
 
-**Total Cost**: $0-2 (domain optional)
+**Day 1 Status**: ✅ Complete - Foundation ready!
+
+---
+
+## Core Features to Implement
+
+### Things 3 Key Features
+1. **Today View** - Tasks scheduled for today (central focus)
+2. **Anytime View** - Unscheduled tasks waiting to be scheduled
+3. **Upcoming View** - Future tasks grouped by date
+4. **Projects** - Group related tasks together
+5. **Quick Entry** - Fast task creation with (+) button
+6. **Task Details** - Edit title, notes, dates, project assignment
+7. **Check/Uncheck** - Mark tasks complete with smooth animation
+8. **Beautiful Animations** - Smooth, purposeful transitions
 
 ---
 
 ## Implementation Timeline
 
-### **Day 1: Setup & Scaffolding** (4-6 hours)
+### **Day 1: Setup & Scaffolding** ✅ COMPLETE
 
-**Morning: Environment Setup**
-1. Create Vite React TypeScript project
-   - `npm create vite@latest water-tracker -- --template react-ts`
-   - Install dependencies: Tailwind, shadcn/ui, Supabase client
-2. Configure Tailwind CSS for mobile-first
-   - Set breakpoints, touch target sizes (min 48px)
-   - Install and configure shadcn/ui CLI
-3. Create Supabase project
-   - Sign up at supabase.com
-   - Create new project (free tier)
-   - Note API URL and anon key
-4. Setup project structure
-   ```
-   src/
-   ├── components/
-   ├── lib/
-   ├── pages/
-   ├── hooks/
-   ├── types/
-   └── utils/
-   ```
+**What We Did**:
+- ✅ Created Vite + React + TypeScript project
+- ✅ Installed and configured Tailwind CSS v4
+- ✅ Set up Supabase client
+- ✅ Configured PWA with Vite PWA plugin
+- ✅ Created project structure (components, lib, pages, hooks, types, utils)
+- ✅ Initialized Git and pushed to GitHub
+- ✅ Built working dev server
 
-**Afternoon: PWA Foundation**
-5. Add PWA manifest (`public/manifest.json`)
-   - App name, icons, theme colors
-   - Display: standalone
-6. Create app icons (192x192, 512x512)
-   - Use Canva or Figma to generate
-   - Water drop design with gradient
-7. Install Vite PWA plugin
-   - Configure basic service worker
-8. Test PWA install on mobile browser
-
-**Evening: Version Control & Deployment**
-9. Initialize Git repository
-10. Create GitHub repository
-11. Deploy to Vercel
-    - Connect GitHub repo
-    - Configure build settings (auto)
-    - Get live URL
-12. Test on actual mobile device
-
-**Deliverable**: Live, installable PWA shell with proper mobile viewport
+**Status**: Foundation is perfect for Things 3 clone!
 
 ---
 
 ### **Day 2: Database & Core UI** (6-8 hours)
 
 **Morning: Database Schema**
-1. Design Supabase tables:
-   ```sql
-   -- users (auto-created by Supabase Auth)
-   
-   -- water_logs
-   CREATE TABLE water_logs (
-     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-     user_id UUID REFERENCES auth.users NOT NULL,
-     amount_ml INTEGER NOT NULL,
-     logged_at TIMESTAMPTZ DEFAULT NOW(),
-     created_at TIMESTAMPTZ DEFAULT NOW()
-   );
-   
-   -- user_settings
-   CREATE TABLE user_settings (
-     user_id UUID PRIMARY KEY REFERENCES auth.users,
-     daily_goal_ml INTEGER DEFAULT 2000,
-     units TEXT DEFAULT 'ml',
-     reminder_enabled BOOLEAN DEFAULT false,
-     reminder_times TEXT[], -- ['09:00', '12:00', '15:00', '18:00']
-     created_at TIMESTAMPTZ DEFAULT NOW()
-   );
+Design Supabase tables for task management:
+
+```sql
+-- tasks table
+CREATE TABLE tasks (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users NOT NULL,
+  title TEXT NOT NULL,
+  notes TEXT,
+  status TEXT DEFAULT 'anytime', -- 'today', 'anytime', 'upcoming', 'someday', 'completed'
+  scheduled_date DATE,
+  deadline_date DATE,
+  project_id UUID REFERENCES projects(id),
+  checklist_items JSONB DEFAULT '[]', -- [{id, title, completed}]
+  position INTEGER, -- for manual ordering
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create indexes
+CREATE INDEX idx_tasks_user_id ON tasks(user_id);
+CREATE INDEX idx_tasks_status ON tasks(status);
+CREATE INDEX idx_tasks_scheduled_date ON tasks(scheduled_date);
+
+-- Row Level Security
+ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own tasks" ON tasks
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own tasks" ON tasks
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own tasks" ON tasks
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own tasks" ON tasks
+  FOR DELETE USING (auth.uid() = user_id);
+
+-- projects table
+CREATE TABLE projects (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users NOT NULL,
+  title TEXT NOT NULL,
+  notes TEXT,
+  area_id UUID REFERENCES areas(id),
+  status TEXT DEFAULT 'active', -- 'active', 'completed'
+  position INTEGER,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create indexes and RLS for projects
+CREATE INDEX idx_projects_user_id ON projects(user_id);
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own projects" ON projects
+  FOR ALL USING (auth.uid() = user_id);
+
+-- areas table (optional - for future expansion)
+CREATE TABLE areas (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users NOT NULL,
+  title TEXT NOT NULL,
+  position INTEGER,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- user_preferences table
+CREATE TABLE user_preferences (
+  user_id UUID PRIMARY KEY REFERENCES auth.users,
+  theme TEXT DEFAULT 'light', -- 'light', 'dark', 'system'
+  first_day_of_week INTEGER DEFAULT 0, -- 0 = Sunday
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+**Afternoon: Things-Style UI Components**
+Build core components matching Things 3 design:
+
+1. **Navigation Bar**
+   - Top bar with view title
+   - Back button (when in detail view)
+   - Search button
+   - Clean, minimal design
+
+2. **Task Row Component**
+   - Circular checkbox (not checked: circle outline, checked: filled circle with checkmark)
+   - Task title
+   - Date indicator (colored dot for scheduled date)
+   - Swipe actions (complete, delete)
+   - 44px minimum touch target
+
+3. **Bottom Tab Navigation**
+   - Today / Anytime / Upcoming / More tabs
+   - Badge counts on each tab
+   - Active state with blue underline
+   - System font icons
+
+4. **Quick Entry Button**
+   - Floating (+) button (bottom right)
+   - Slides up modal on tap
+   - Focus input immediately
+
+5. **Task List Container**
+   - Grouped sections (Overdue, Today, etc.)
+   - Pull to refresh
+   - Empty states
+
+**Evening: Basic Task Operations**
+Implement core functionality:
+
+1. **Create Task** (Quick Entry)
+   - Modal slides up from bottom
+   - Auto-focus text input
+   - "Add to Today" or "Add to Anytime" buttons
+   - Parse title for dates (stretch goal)
+
+2. **Read Tasks**
+   - Fetch tasks from Supabase
+   - Filter by status (today, anytime, upcoming)
+   - Sort by position, then date, then created_at
+
+3. **Update Task**
+   - Toggle completion status
+   - Move between views (Today ↔ Anytime)
+   - Edit task details
+
+4. **Delete Task**
+   - Swipe left to reveal delete button
+   - Confirm deletion
+   - Remove from database
+
+**Deliverable**: Working Today view with create/read/update/delete tasks
+
+---
+
+### **Day 3: UX Polish & Animations** (6-8 hours)
+
+**Morning: Install & Configure Framer Motion**
+```bash
+npm install framer-motion
+```
+
+Implement Things-style animations:
+
+1. **Checkbox Animation**
+   ```tsx
+   // Smooth scale + fill animation (like Things)
+   <motion.div
+     initial={{ scale: 1 }}
+     animate={{ scale: completed ? [1, 1.2, 1] : 1 }}
+     transition={{ duration: 0.2 }}
+   >
+     {/* Checkbox SVG */}
+   </motion.div>
    ```
 
-2. Set Row Level Security (RLS) policies
-   - Users can only access their own data
-   - Enable RLS on all tables
+2. **Task Completion Animation**
+   - Fade out opacity: 1 → 0
+   - Slide left slightly
+   - Duration: 0.3s ease-out
+   - Remove from list after animation
 
-**Afternoon: Authentication UI**
-3. Build onboarding flow:
-   - Welcome screen (dismissible, 1 screen)
-   - Goal selection (preset buttons: 1.5L, 2L, 2.5L, 3L, custom)
-   - Enable notifications prompt
-4. Implement Supabase Auth
-   - Magic link email authentication
-   - OR Google OAuth (simpler, no email verification)
-   - Store user settings on signup
+3. **View Transition Animations**
+   - Slide horizontal when switching tabs
+   - Direction based on tab order (Today → Anytime = slide left)
+   - Use AnimatePresence
 
-**Evening: Main Dashboard**
-5. Create main logging screen:
-   - Large circular progress indicator (Recharts)
-   - Quick-log buttons: 250ml, 500ml, 750ml, custom
-   - Today's total display
-   - Current streak counter
-6. Implement state management
-   - React Context for global state
-   - OR Zustand (lightweight, 1KB)
-7. Connect to Supabase
-   - Fetch today's logs
-   - Submit new logs
-   - Real-time subscription for multi-device sync
+4. **Quick Entry Modal**
+   - Slide up from bottom: translateY(100%) → 0
+   - Backdrop fade in
+   - Spring animation (not linear)
 
-**Deliverable**: Functional water logging with persistence
+5. **List Item Animations**
+   - Stagger children when list loads
+   - Smooth layout shifts with `layout` prop
 
----
+**Afternoon: Task Detail Sheet**
+Build detailed task editor (slides up from bottom):
 
-### **Day 3: Mobile Polish & Gestures** (6-8 hours)
+1. **Layout**
+   - Large text input for title
+   - Notes textarea (multiline)
+   - Date picker section
+   - Project assignment dropdown
+   - Checklist items section
+   - Delete button at bottom
 
-**Morning: Touch Interactions**
-1. Add haptic feedback
-   - `navigator.vibrate([10])` on successful log
-   - Vibration on streak milestone
-2. Implement swipe gestures
-   - Swipe left/right to navigate days
-   - Use `react-swipeable` library
-3. Add micro-animations
-   - Progress bar fill animation (0.3s ease-out)
-   - Number counter animation (react-spring)
-   - Celebration confetti on goal reached
-4. Toast notifications
-   - "Added 250ml" confirmation
-   - "Goal reached! 🎉" celebration
-   - Use shadcn/ui Toast component
+2. **Date Picker**
+   - Beautiful custom picker (not native)
+   - Today, Tomorrow, This Evening shortcuts
+   - Calendar grid for specific dates
+   - "Clear schedule" option
 
-**Afternoon: Offline Functionality**
-5. Setup IndexedDB with Dexie.js
-   - Store logs locally
-   - Queue for background sync
-6. Configure Workbox strategies
-   - Cache-first for assets
-   - Network-first for API with fallback
-7. Implement offline indicator
-   - Show "Syncing..." when offline
-   - Auto-sync when connection restored
-8. Test airplane mode scenario
+3. **Auto-save**
+   - Save on input blur
+   - Debounce changes (500ms)
+   - Optimistic UI updates
 
-**Evening: Responsive Design**
-9. Test on multiple screen sizes
-   - iPhone SE (320px)
-   - Standard phones (375-428px)
-   - Tablets (768px+)
-10. Adjust touch targets (minimum 48x48px)
-11. Safe area handling for notched devices
-    - `env(safe-area-inset-top)` padding
-12. Landscape mode optimization
+4. **Keyboard Handling**
+   - Done button on mobile keyboards
+   - Tab navigation
+   - Esc to close
 
-**Deliverable**: Native-feeling mobile experience with offline support
+**Evening: Touch Interactions**
+Polish the mobile experience:
+
+1. **Swipe Gestures**
+   - Swipe right: Mark complete
+   - Swipe left: Show delete button
+   - Subtle haptic feedback
+   - Use `framer-motion` drag
+
+2. **Long Press**
+   - Long press task for quick actions menu
+   - Move to Today, Schedule, Delete options
+
+3. **Pull to Refresh**
+   - Custom pull-to-refresh component
+   - Spinny loading indicator like Things
+
+4. **Tap Interactions**
+   - Tap checkbox: Toggle complete
+   - Tap task row: Open detail sheet
+   - Tap outside modal: Close
+
+**Deliverable**: Smooth, polished interactions matching Things 3 quality
 
 ---
 
-### **Day 4: Features & Gamification** (6-8 hours)
+### **Day 4: Projects & Multiple Views** (6-8 hours)
 
-**Morning: History & Analytics**
-1. Build history view:
-   - Weekly calendar grid
-   - Daily totals with color coding (red < 50%, yellow 50-99%, green 100%+)
-   - Monthly summary view
-2. Add data visualization:
-   - 7-day bar chart (Recharts)
-   - 30-day trend line (premium feature)
-   - Average intake calculation
-3. Historical data query optimization
-   - Paginated loading
-   - Cache recent weeks
+**Morning: Projects Feature**
+1. **Projects List View**
+   - New tab in bottom navigation
+   - List of active projects
+   - Task count badge per project
+   - Swipe to mark project complete
 
-**Afternoon: Streak System**
-4. Implement streak calculation:
-   ```typescript
-   // Consecutive days meeting goal
-   function calculateStreak(logs: WaterLog[], goal: number) {
-     // Group by day, check if goal met
-     // Count backwards from today
-   }
+2. **Create/Edit Project**
+   - Similar modal to task creation
+   - Title and notes fields
+   - Optional area assignment (future)
+   - Color/emoji picker (optional nice-to-have)
+
+3. **Project Detail View**
+   - Show all tasks in project
+   - Filter by status
+   - Progress indicator (X of Y complete)
+   - Quick add task to project
+
+4. **Assign Task to Project**
+   - Dropdown in task detail
+   - Search/filter projects
+   - "None" option to unassign
+
+**Afternoon: Multiple Views Implementation**
+Complete the three main views:
+
+1. **Today View**
+   - Tasks with `scheduled_date = today` OR `status = 'today'`
+   - Overdue section at top (red indicator)
+   - This Evening section at bottom (optional)
+   - Badge count in tab
+
+2. **Anytime View**
+   - Tasks with `status = 'anytime'` (no scheduled_date)
+   - Grouped by project
+   - "No Project" section at bottom
+   - Badge count
+
+3. **Upcoming View**
+   - Tasks with `scheduled_date > today`
+   - Grouped by date: Tomorrow, This Week, Next Week, Later
+   - Date headers with relative labels
+   - Calendar icon indicators
+
+4. **View Switching**
+   - Bottom tab navigation
+   - Animated transitions
+   - Badge counts update real-time
+   - Persist last viewed tab
+
+**Evening: Scheduling & Moving Tasks**
+Implement task movement between views:
+
+1. **Quick Actions**
+   - "Move to Today" button
+   - "Schedule" button (opens date picker)
+   - "Move to Anytime" (clears schedule)
+   - Context menu or swipe actions
+
+2. **Scheduling Logic**
+   - Set `scheduled_date` = selected date
+   - Update `status` based on date (today, upcoming, anytime)
+   - Automatically move to correct view
+   - Real-time sync across tabs
+
+3. **Natural Date Parsing** (Stretch Goal)
+   - Parse "tomorrow" → set date
+   - Parse "next monday" → calculate date
+   - Use library like `chrono-node` or `date-fns`
+
+**Deliverable**: Full view system with projects and scheduling
+
+---
+
+### **Day 5: Authentication & Sync** (6-8 hours)
+
+**Morning: Supabase Authentication**
+Implement user authentication:
+
+1. **Auth UI Components**
+   - Login screen (email + password)
+   - Sign up screen
+   - Password reset flow
+   - Simple, clean design like Things
+
+2. **Supabase Auth Integration**
+   ```tsx
+   // Sign up
+   const { data, error } = await supabase.auth.signUp({
+     email,
+     password
+   })
+   
+   // Sign in
+   const { data, error} = await supabase.auth.signInWithPassword({
+     email,
+     password
+   })
+   
+   // Get session
+   const { data: { session } } = await supabase.auth.getSession()
    ```
-5. Add streak UI:
-   - Flame emoji counter "🔥 12 days"
-   - Motivational messages
-   - "Don't break your streak!" if near midnight
-6. Achievement badges (simple icons):
-   - "First Drop" (logged first time)
-   - "Week Warrior" (7-day streak)
-   - "Hydration Hero" (30-day streak)
-   - "Century Club" (100 days total)
 
-**Evening: Push Notifications**
-7. Setup Firebase Cloud Messaging:
-   - Create Firebase project
-   - Add Firebase config to app
-   - Request notification permission
-8. Implement reminder system:
-   - Store FCM token in Supabase
-   - Create Supabase Edge Function for scheduled sends
-   - OR use Firebase Cloud Functions
-9. Smart reminder messages:
-   - "Stay hydrated! You've logged 3 glasses today 💧"
-   - "Keep your 8-day streak alive!"
-10. Allow customization in settings
-    - Toggle reminders on/off
-    - Set reminder times
+3. **Auth State Management**
+   - React Context for auth state
+   - Persist session in localStorage
+   - Auto-refresh tokens
+   - Protected routes (redirect to login if not authenticated)
 
-**Deliverable**: Engaging gamification driving daily retention
+4. **First-Time Setup**
+   - After signup, create user_preferences record
+   - Show brief onboarding (optional)
+   - Default to Today view
+
+**Afternoon: Real-time Sync**
+Enable multi-device synchronization:
+
+1. **Supabase Realtime Subscriptions**
+   ```tsx
+   // Subscribe to task changes
+   const channel = supabase
+     .channel('tasks')
+     .on('postgres_changes', 
+       { event: '*', schema: 'public', table: 'tasks', filter: `user_id=eq.${userId}` },
+       (payload) => {
+         // Update local state
+       }
+     )
+     .subscribe()
+   ```
+
+2. **Optimistic Updates**
+   - Update UI immediately on user action
+   - Send request to Supabase in background
+   - Revert if error occurs
+   - Show loading states subtly
+
+3. **Conflict Resolution**
+   - Last-write-wins (simple approach)
+   - Use `updated_at` timestamp to determine latest
+   - Handle edge cases (deleted task edited on another device)
+
+4. **Loading States**
+   - Skeleton loaders for initial fetch
+   - Subtle spinners for background sync
+   - Don't block UI while syncing
+
+**Evening: Offline Support**
+Implement offline-first architecture:
+
+1. **IndexedDB Cache**
+   - Use Dexie.js wrapper for IndexedDB
+   - Store tasks locally
+   - Sync queue for pending changes
+
+2. **Service Worker Strategy**
+   - Already configured from Day 1
+   - Network-first for API calls
+   - Cache-first for static assets
+   - Offline fallback
+
+3. **Offline Detection**
+   - Monitor `navigator.onLine`
+   - Show offline indicator in UI
+   - Queue operations when offline
+   - Sync when connection restored
+
+4. **Test Offline Scenarios**
+   - Airplane mode
+   - Poor connection
+   - Network switching
+
+**Deliverable**: Multi-device sync with offline support
 
 ---
 
-### **Day 5: Monetization & Premium Features** (6-8 hours)
+### **Day 6: Advanced Features & Polish** (6-8 hours)
 
-**Morning: Freemium Design**
-1. Define free vs premium:
-   - **Free**: 7-day history, basic logging, 1 reminder/day, streaks
-   - **Premium**: Unlimited history, analytics, custom reminders, export, no ads
-2. Implement feature gating:
-   - "Upgrade to Premium" overlays on locked features
-   - Graceful degradation (disable, don't hide)
-3. Add premium badge UI
-   - Crown icon for premium users
-   - "Premium" tag in settings
+**Morning: Checklist Items (Sub-tasks)**
+Add checklist functionality like Things 3:
 
-**Afternoon: Paywall & Stripe**
-4. Design paywall screen:
-   - Show after day 7 (on app open)
-   - Compelling copy: "You've built a habit! Unlock full insights"
-   - Pricing: $2.99/month or $19.99/year (save 45%)
-5. Integrate Stripe:
-   - Create Stripe account
-   - Add Stripe Checkout
-   - OR use Stripe Payment Links (simpler)
-   - Webhook to mark user as premium in Supabase
-6. Subscription management:
-   - "Manage subscription" link (Stripe portal)
-   - Cancel/resume flow
+1. **Database Update**
+   - Already have `checklist_items` JSONB column
+   - Structure: `[{id: uuid, title: string, completed: boolean}]`
 
-**Evening: Premium Features Implementation**
-7. Export functionality:
-   - CSV download of all logs
-   - PDF report with charts (html2pdf)
-8. Advanced analytics (premium only):
-   - Monthly trends
-   - Hourly intake patterns
-   - Prediction: "You usually need 2 more glasses by evening"
-9. Custom reminder scheduling:
-   - Unlimited reminder times
-   - Smart suggestions based on log patterns
-10. Premium user testing
+2. **UI Components**
+   - Add checklist item button in task detail
+   - Inline editable checklist items
+   - Checkbox for each item
+   - Drag to reorder (stretch goal)
 
-**Deliverable**: Revenue-generating freemium model
+3. **Progress Indicator**
+   - Show completion ratio (e.g., "2 of 5")
+   - Visual progress bar in task row
+   - Update when items checked
 
----
+4. **Keyboard Shortcuts**
+   - Enter to add new checklist item
+   - Backspace on empty item to delete
 
-### **Day 6: Onboarding & UX Polish** (4-6 hours)
+**Afternoon: Search & Quick Find**
+Implement fast search:
 
-**Morning: Onboarding Flow**
-1. Create welcome slides:
-   - Slide 1: "Track water in one tap"
-   - Slide 2: "Build healthy habits with streaks"
-   - Slide 3: "Get insights and reminders"
-   - Skip button on all slides
-2. Interactive tutorial:
-   - Highlight first log button with tooltip
-   - Guide through goal setting
-3. Empty states:
-   - No logs yet: "Log your first glass!"
-   - No streaks yet: "Meet your goal today to start a streak"
-4. Add "Install App" prompt:
-   - Detect if not installed
-   - Show banner after 2-3 successful logs
-   - Dismissible, respects user preference
+1. **Quick Find Modal**
+   - Cmd/Ctrl+K to open
+   - Fuzzy search across tasks and projects
+   - Search by title and notes
+   - Recent searches
 
-**Afternoon: Settings & Preferences**
-5. Build settings screen:
-   - Daily goal adjustment
-   - Units toggle (ml, oz, cups)
-   - Reminder preferences
+2. **Search Implementation**
+   ```tsx
+   const { data } = await supabase
+     .from('tasks')
+     .select('*')
+     .ilike('title', `%${query}%`)
+     .or(`notes.ilike.%${query}%`)
+   ```
+
+3. **Search Results UI**
+   - Grouped by status/project
+   - Keyboard navigation (arrow keys)
+   - Enter to select
+   - Esc to close
+
+4. **Performance**
+   - Debounce search input (300ms)
+   - Limit results to 50
+   - Show loading state
+
+**Evening: Settings & Preferences**
+Build settings page:
+
+1. **Settings Screen**
+   - Accessible from "More" tab
+   - Clean list design like iOS Settings
+
+2. **Preferences**
+   - Theme toggle (Light / Dark / System)
+   - First day of week (for Upcoming view)
    - Account management
-   - "Restore purchases" (if using in-app purchases)
-6. Profile customization:
-   - Avatar upload (Supabase Storage)
-   - Display name
-7. Data management:
-   - Clear all data (with confirmation)
-   - Delete account
+   - Sign out button
 
-**Evening: Accessibility & UX**
-8. Add loading states:
-   - Skeleton screens for data fetching
-   - Spinner on login
-9. Error handling:
-   - Network errors: "Can't connect. Trying again..."
-   - Auth errors: Clear messages
-   - Form validation
-10. Accessibility audit:
-    - Semantic HTML
-    - ARIA labels for screen readers
-    - Keyboard navigation
-    - Color contrast check (WCAG AA)
-11. Performance optimization:
-    - Lazy load routes
-    - Image optimization
-    - Bundle size analysis
+3. **About Page**
+   - App version
+   - Credits: "Inspired by Things 3 by Cultured Code"
+   - Educational project disclaimer
+   - Privacy policy link (if needed)
 
-**Deliverable**: Polished, accessible user experience
+4. **Empty States**
+   - Beautiful illustrations for empty Today view
+   - "No tasks today" with motivational message
+   - Empty Anytime view
+   - Empty Projects list
+   - Onboarding hints
+
+**Deliverable**: Feature-complete task manager
 
 ---
 
-### **Day 7: Launch & Marketing** (6-8 hours)
+### **Day 7: Final Polish & Deployment** (4-6 hours)
 
-**Morning: Final QA & Testing**
-1. Cross-browser testing:
-   - Chrome (Android)
-   - Safari (iOS)
-   - Firefox, Edge
-2. Device testing:
-   - 3-5 different devices
-   - Test install flow
+**Morning: UI Refinement**
+Match Things 3's visual quality:
+
+1. **Color Palette**
+   ```css
+   /* Things 3 color system */
+   --blue-primary: #3478F6;        /* Primary blue */
+   --text-primary: #000000;        /* Black text */
+   --text-secondary: #8E8E93;      /* Gray secondary text */
+   --background: #F2F2F7;          /* Light gray background */
+   --card-background: #FFFFFF;     /* White cards */
+   --border: #C6C6C8;              /* Light gray borders */
+   --success-green: #34C759;       /* Green for completed */
+   --overdue-red: #FF3B30;         /* Red for overdue */
+   ```
+
+2. **Typography**
+   ```css
+   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif;
+   ```
+
+3. **Spacing & Layout**
+   - Use 8px grid system (padding multiples of 8)
+   - Generous whitespace between sections
+   - 16px horizontal margins on mobile
+   - 44px minimum touch targets
+
+4. **Micro-interactions**
+   - Subtle hover states (on desktop)
+   - Active press states with scale(0.98)
+   - Smooth color transitions
+   - Haptic feedback on mobile
+
+**Afternoon: Performance Optimization**
+Ensure smooth performance:
+
+1. **Code Splitting**
+   ```tsx
+   const ProjectDetail = lazy(() => import('./pages/ProjectDetail'))
+   ```
+
+2. **Bundle Analysis**
+   ```bash
+   npm run build
+   npx vite-bundle-visualizer
+   ```
+   - Remove unused dependencies
+   - Tree-shake large libraries
+   - Lazy load heavy components
+
+3. **Image Optimization**
+   - Compress PNG icons
+   - Use SVG where possible
+   - WebP format for photos
+
+4. **Lighthouse Audit**
+   - Run in Chrome DevTools
+   - Target: 90+ on all metrics
+   - Fix accessibility issues
+   - Optimize LCP (Largest Contentful Paint)
+
+**Evening: Deploy to Vercel**
+Launch the app:
+
+1. **Create Production Supabase Project**
+   - New project at supabase.com
+   - Run database migration SQL
+   - Enable Row Level Security
+   - Copy API keys
+
+2. **Deploy to Vercel**
+   - Push latest code to GitHub
+   - Import project in Vercel dashboard
+   - Add environment variables:
+     - `VITE_SUPABASE_URL`
+     - `VITE_SUPABASE_ANON_KEY`
+   - Deploy!
+
+3. **Test on Real Devices**
+   - iPhone (Safari)
+   - Android (Chrome)
+   - Tablet (iPad)
+   - Install as PWA
    - Test offline mode
-   - Test notifications
-3. Performance audit:
-   - Lighthouse score (target: 90+ in all categories)
-   - Bundle size check
-   - API response times
-4. Security review:
-   - RLS policies verified
-   - No API keys in client code
-   - HTTPS enabled
-5. Fix critical bugs
+   - Test multi-device sync
 
-**Afternoon: Production Deployment**
-6. Domain setup (if using custom):
-   - Purchase Namecheap .xyz ($1-2)
-   - Configure DNS to point to Vercel
-   - Wait for DNS propagation
-7. Configure production environment:
-   - Supabase production vs dev keys
-   - Enable production mode
-   - Set up error tracking (Sentry free tier)
-8. Analytics setup:
-   - Vercel Analytics enabled
-   - Plausible Analytics embedded
-   - Track key events: logs, signups, upgrades
-9. Final production build and deploy
-10. SSL certificate verification
+4. **Share Demo**
+   - Get feedback from friends
+   - Note any bugs or UX issues
+   - Iterate if time permits
 
-**Evening: Marketing Launch**
-11. Create landing page (optional):
-    - Simple hero section
-    - Features list
-    - "Open App" CTA (links to PWA)
-    - OR use main app as landing page
-12. Social media assets:
-    - Screenshots on mock devices
-    - Feature highlight graphics (Canva)
-    - Demo video (30 seconds)
-13. Launch preparation:
-    - Product Hunt listing draft
-    - Reddit posts (r/SideProject, r/webdev, r/PWA)
-    - Twitter/X announcement
-    - LinkedIn post
-    - IndieHackers post
-14. Initial promotion:
-    - Submit to Product Hunt
-    - Post on relevant subreddits
-    - Share in 5-10 relevant Discord/Slack communities
-    - Ask friends/family to try and share
-15. Set up monitoring:
-    - Watch analytics for first users
-    - Monitor error rates
-    - Check conversion funnel
-
-**Deliverable**: Live, marketed water tracker PWA earning first users
+**Deliverable**: Live Things 3 clone at your-domain.vercel.app
 
 ---
 
-## Relevant Files (To Be Created)
+## Design Reference
 
-### Core App Files
-- `src/App.tsx` — Main app component, routing, auth wrapper
-- `src/pages/Dashboard.tsx` — Main logging screen with progress circle
-- `src/pages/History.tsx` — Historical data and charts
-- `src/pages/Settings.tsx` — User preferences and account
-- `src/pages/Onboarding.tsx` — Welcome flow for new users
-- `src/pages/Premium.tsx` — Paywall and upgrade screen
+### Things 3's Design Principles
+1. **Minimalism** - No visual clutter, purposeful UI
+2. **Typography** - San Francisco system font
+3. **Color** - Subtle blues for interactive elements
+4. **Animations** - Smooth, never jarring
+5. **Whitespace** - Generous spacing
+6. **Tactile Feel** - Satisfying to use
+7. **Speed** - Instant feedback, no lag
 
-### Components
-- `src/components/WaterLogButton.tsx` — Quick-log preset buttons (250ml, 500ml, etc)
-- `src/components/ProgressCircle.tsx` — Circular progress indicator with Recharts
-- `src/components/StreakCounter.tsx` — Flame emoji + streak days display
-- `src/components/HistoryChart.tsx` — Weekly/monthly bar charts
-- `src/components/NotificationPrompt.tsx` — Ask for notification permission
-- `src/components/InstallPrompt.tsx` — Banner to install PWA
-- `src/components/Toast.tsx` — shadcn/ui toast notifications
+### Key Animations
+- **Checkbox**: Scale + fill (0.2s ease)
+- **Task Complete**: Fade + slide left (0.3s ease-out)
+- **View Transition**: Horizontal slide (0.25s ease-in-out)
+- **Modal**: Slide up from bottom (0.3s spring)
 
-### Services & Utils
-- `src/lib/supabase.ts` — Supabase client configuration
-- `src/lib/db.ts` — IndexedDB setup with Dexie.js
-- `src/hooks/useWaterLogs.ts` — Custom hook for fetching/submitting logs
-- `src/hooks/useStreak.ts` — Streak calculation logic
-- `src/utils/notifications.ts` — FCM token management, permission requests
-- `src/utils/analytics.ts` — Event tracking wrapper
-
-### Configuration
-- `vite.config.ts` — Vite PWA plugin config
-- `tailwind.config.js` — Mobile-first breakpoints, touch targets
-- `public/manifest.json` — PWA manifest
-- `public/sw.js` — Service worker (generated by Vite PWA)
-- `.env` — Supabase keys, Firebase config (gitignored)
-
-### Database (Supabase SQL)
-- SQL schema file for `water_logs`, `user_settings` tables
-- RLS policies for security
+### Component Patterns
+- **Lists**: White background, subtle dividers
+- **Cards**: Rounded corners (12px), shadow
+- **Buttons**: Subtle blue, no heavy borders
+- **Inputs**: Minimal styling, focus ring only
 
 ---
 
-## Verification Steps
+## Success Metrics
 
-### Day 1 Verification
-1. App installs to home screen on iOS and Android
-2. App opens in standalone mode (no browser UI)
-3. Vercel deployment auto-updates on git push
-4. Mobile viewport is properly configured (no horizontal scroll)
+### Educational Goals
+- ✅ Learn professional UI animation patterns
+- ✅ Practice component architecture
+- ✅ Master task management data modeling
+- ✅ Build production-quality PWA
+- ✅ Understand Things 3's UX philosophy
 
-### Day 2 Verification
-1. User can sign up with Google OAuth
-2. Water log persists to Supabase and appears on reload
-3. RLS prevents users from seeing others' data (test with 2 accounts)
-4. Progress circle updates when log is added
+### Technical Goals
+- [ ] <100ms interaction latency
+- [ ] Lighthouse score 90+
+- [ ] Works offline completely
+- [ ] Syncs across devices instantly
+- [ ] Installable as PWA
+- [ ] Zero layout shift (CLS = 0)
+- [ ] Smooth 60fps animations
 
-### Day 3 Verification
-1. App works offline - log water without internet, syncs when reconnected
-2. Haptic feedback triggers on log (test on mobile device)
-3. Swipe left/right changes date
-4. All touch targets are 48px+ (use Chrome DevTools)
-5. App works on iPhone SE (320px width)
-
-### Day 4 Verification
-1. Streak count is accurate (test by logging for 3 consecutive days)
-2. History view shows past 7 days correctly
-3. Push notification received at scheduled time
-4. Notification click opens app
-5. Charts render correctly with real data
-
-### Day 5 Verification
-1. Premium paywall appears after 7 days (adjust date to test)
-2. Stripe payment completes successfully (test mode)
-3. User is marked as premium in database after payment
-4. Premium features are unlocked
-5. CSV export downloads with correct data
-6. Subscription can be cancelled via Stripe portal
-
-### Day 6 Verification
-1. New user sees onboarding flow only once
-2. Skip button works on all onboarding slides
-3. Settings save and persist across sessions
-4. "Install app" prompt appears after 2 logs (if not installed)
-5. Lighthouse score is 90+ on all metrics
-6. Screen reader can navigate the app (VoiceOver test)
-
-### Day 7 Verification
-1. Production URL loads over HTTPS
-2. Custom domain points correctly (if using)
-3. Analytics tracking fires on signup, log, upgrade events
-4. Sentry captures errors (trigger a test error)
-5. App works on 5+ different devices
-6. Social media preview cards show correctly (Twitter, Facebook)
-7. Product Hunt listing is live
-8. First real user can complete full flow (ask friend to test)
-
-### Automated Tests (Optional, Time Permitting)
-- Unit tests for streak calculation
-- Integration tests for auth flow
-- E2E tests with Playwright for critical paths (signup → log → paywall)
+### Feature Completeness
+- [ ] Core task management (create, read, update, delete)
+- [ ] Three main views (Today, Anytime, Upcoming)
+- [ ] Projects with task grouping
+- [ ] Task scheduling and dates
+- [ ] Smooth animations throughout
+- [ ] Offline support with sync
+- [ ] Multi-device support
 
 ---
 
-## Decisions & Assumptions
+## Study Resources
 
-### Confirmed Decisions
-1. **PWA over React Native** - Faster deployment, no app store fees, easier testing
-2. **Vite over Next.js** - Simpler, faster dev server, smaller bundles for single-page app
-3. **Supabase over Firebase** - PostgreSQL (more flexible), better developer experience
-4. **shadcn/ui over MUI** - Lighter bundle, better mobile touch targets
-5. **Freemium with 7-day trial** - Balances user acquisition with revenue
-6. **Magic link auth** - Simplest, no password management
-7. **Metric units (ml)** - Can display as oz/cups, but store as ml for consistency
-8. **Stripe over Paddle** - More common, better docs, easier for first-time setup
+### Essential
+- [Things 3 iOS App](https://apps.apple.com/us/app/things-3/id904237743) - Primary reference (download and study)
+- [Things Support](https://culturedcode.com/things/support/) - Feature documentation
+- [Things Blog](https://culturedcode.com/things/blog/) - Design philosophy
 
-### Key Assumptions
-- You're comfortable with TypeScript (can use JavaScript if not, just adjust)
-- You have a GitHub account for version control
-- You can dedicate 6-8 hours/day for 7 days
-- You'll use Claude Code for all development questions
-- Marketing will be organic (Product Hunt, Reddit, social media - no paid ads)
-- Initial goal is 100 users in first week, $100 MRR in first month
-- No iOS/Android native app store presence (PWA only)
+### Inspiration
+- [iOS Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
+- [Framer Motion Examples](https://www.framer.com/motion/)
+- [Linear App](https://linear.app/) - Similar polish level
 
-### Scope Exclusions (Explicitly Not Included)
-- Social features (sharing streaks with friends) - can add post-launch
-- Gamification beyond streaks/badges - keeps scope tight
-- Multiple beverage types (coffee, tea, etc) - water only
-- Integration with health apps (Apple Health, Google Fit) - adds complexity
-- Multi-language support - English only initially
-- Dark mode - nice-to-have, can add quickly post-launch
-- Advanced analytics (ML predictions) - premium feature can expand later
-
-### Risks & Mitigations
-**Risk**: Stripe integration takes longer than expected  
-**Mitigation**: Use Stripe Payment Links (10 min setup) instead of full Checkout integration
-
-**Risk**: Push notifications don't work on iOS PWA  
-**Mitigation**: iOS PWAs now support notifications (iOS 16.4+), but have fallback: in-app time-based prompts
-
-**Risk**: Can't achieve 90+ Lighthouse score  
-**Mitigation**: Focus on Core Web Vitals only, use image optimization, lazy loading
-
-**Risk**: Marketing gets zero traction  
-**Mitigation**: Post in 10+ communities, have 5 friends share, use keywords in posts
+### Technical
+- [Supabase Docs](https://supabase.com/docs)
+- [Framer Motion Docs](https://www.framer.com/motion/)
+- [React Patterns](https://reactpatterns.com/)
 
 ---
 
-## Further Considerations
+## Important Notes
 
-### Post-Launch Priorities (Week 2+)
-1. **Dark mode** - Quick win, high user request (1-2 hours)
-2. **Beverage types** - Track coffee, tea, etc with different icons (3-4 hours)
-3. **Social proof** - "Join 1,000+ people staying hydrated" on landing page
-4. **Referral program** - "Refer a friend, get 1 month free premium" (viral growth)
-5. **Apple Health integration** - Sync water intake to HealthKit (iOS only, 6-8 hours)
+**This is an educational clone to study professional app development.**
 
-### Growth Strategy Options
-- **Option A**: Focus on Product Hunt launch, aim for top 5 product of the day
-- **Option B**: Reddit-first approach, post in 20+ relevant subreddits over 2 weeks
-- **Option C**: Content marketing, write "How I built a PWA in 7 days" blog post (drives SEO)
+- ✅ Learning UI/UX patterns from award-winning app
+- ✅ Practicing modern React architecture
+- ✅ Building production-quality software
+- ❌ Not for commercial use or distribution
+- ❌ Not competing with Things 3
+- ✅ Will credit Things 3 as inspiration
 
-### Monetization Alternatives (If Stripe Premium Doesn't Convert)
-- **Option A**: One-time purchase ($9.99) instead of subscription (simpler, less revenue)
-- **Option B**: Freemium ads (Google AdMob) - free version shows banner ad
-- **Option C**: Sponsorships (partner with water bottle brands, healthtech companies)
+**Key Learnings:**
+1. How to build smooth, purposeful animations
+2. Task management system architecture
+3. Real-time sync patterns with Supabase
+4. Professional mobile-first design
+5. PWA best practices and offline-first approach
 
-**Recommendation**: Start with freemium subscription (best LTV), pivot to one-time if churn is high.
+**Legal:** This is a personal learning project. Things 3 is a trademark of Cultured Code GmbH & Co. KG. This clone is not affiliated with or endorsed by Cultured Code.
 

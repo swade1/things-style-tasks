@@ -1,87 +1,87 @@
-# 💧 Water Tracker PWA
+# Things-Style Tasks
 
-A professional, mobile-first Progressive Web App for tracking daily water intake. Built with modern web technologies and designed for offline-first usage.
+A polished Things 3-inspired task manager PWA — built as a learning exercise studying professional mobile-first design, smooth animations, and real-time task management. Not affiliated with Cultured Code.
 
-## 🚀 Tech Stack
+**Purpose**: Educational only — not for commercial use.
 
-- **Frontend**: Vite + React 18 + TypeScript
-- **Styling**: Tailwind CSS v4 + shadcn/ui utilities
-- **Backend**: Supabase (Database, Auth, Storage)
-- **PWA**: Vite PWA Plugin + Workbox
+## Tech Stack
+
+- **Frontend**: Vite 8 + React 19 + TypeScript
+- **Styling**: Tailwind CSS v4 with glass-surface utility classes
+- **Animations**: Framer Motion (lazy-loaded)
+- **Backend**: Supabase (PostgreSQL, Auth, Realtime)
+- **PWA**: vite-plugin-pwa + Workbox (offline support)
 - **Deployment**: Vercel
 - **Icons**: Lucide React
 
-## ✨ Features (Planned)
+## Features
 
-- ✅ Quick water intake logging
-- ✅ Daily goal tracking
-- ✅ Streak counter
-- ✅ Water history and analytics
-- ✅ Push notifications for reminders
-- ✅ Offline support with sync
-- ✅ Dark mode
-- ✅ Mobile-optimized UI (48px+ touch targets)
-- ✅ PWA installable on mobile devices
+### Task Management
+- Today, Anytime, and Upcoming views
+- Projects with nested task lists
+- Tags with multi-select filtering
+- Global search with keyboard navigation (↑↓ + Enter)
+- Quick Entry sheet for fast task creation
+- Task detail sheet — title, notes, due date, tags, project
 
-## 📦 Installation
+### UX & Interactions
+- Smooth checkbox animations (scale + fill)
+- Task completion fade-out
+- Horizontal view transitions
+- Bottom sheet modals with drag indicator
+- Body scroll lock on open sheets
+- Escape key to dismiss
+- DatePicker outside-click dismiss
+- Task drill-down from Project detail sheet
+
+### Technical
+- Code-split bundle (vendor-react, vendor-motion, vendor-supabase, vendor-ui)
+- Lazy-loaded screens via `React.lazy` + `Suspense`
+- Real-time sync via Supabase Realtime
+- PWA installable on iOS and Android
+- Supabase RLS (row-level security) on all tables
+
+## Getting Started
 
 ```bash
-# Install dependencies
 npm install
 
-# Set up environment variables
 cp .env.example .env
-# Add your Supabase credentials to .env
+# Add your Supabase credentials
 
-# Start development server
 npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
 ```
 
-## 🔧 Environment Variables
-
-Create a `.env` file with:
+## Environment Variables
 
 ```env
 VITE_SUPABASE_URL=your-supabase-project-url
 VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
-## 📱 Development
-
-This project follows a 7-day implementation plan. See [PLAN.md](./PLAN.md) for the complete roadmap.
-
-### Day 1 Status: ✅ Complete
-- Setup and scaffolding
-- PWA foundation
-- Development environment ready
-
-See [DAY1-COMPLETE.md](./DAY1-COMPLETE.md) for deployment instructions.
-
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 src/
-├── components/     # React components
-├── lib/            # Utilities and configs
-│   ├── supabase.ts # Supabase client
-│   └── utils.ts    # Utility functions
-├── pages/          # Page components
-├── hooks/          # Custom React hooks
+├── components/     # Shared UI components and sheets
+├── pages/          # Top-level views (Today, Anytime, Upcoming, Projects)
+├── hooks/          # Custom React hooks (useAuth, useTasks, useProjects)
+├── lib/            # Supabase client and utilities
 ├── types/          # TypeScript type definitions
-└── utils/          # Helper functions
+└── utils/          # Search and helper functions
 ```
 
-## 🔐 License
+## Database Migrations
 
-MIT
+SQL migrations live in `supabase/`. Apply them in order via the Supabase SQL Editor.
 
-## 👤 Author
+## License
 
-Built as part of a 7-day PWA challenge.
+MIT — educational purposes only.
+
+## 📚 Credits
+
+Inspired by [Things 3](https://culturedcode.com/things/) by Cultured Code GmbH & Co. KG.
+
+**Disclaimer**: This is an educational clone for learning purposes only. Things 3 is a registered trademark of Cultured Code. This project is not affiliated with or endorsed by Cultured Code.
 

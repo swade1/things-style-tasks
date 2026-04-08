@@ -146,7 +146,7 @@ export function TaskRow({ task, onToggle, onClick, onDelete, onReorderStart, cla
           <span
             className={cn(
               'text-[15px] truncate',
-              isCompleted ? 'line-through text-gray-500' : 'text-gray-900'
+              isCompleted ? 'line-through text-gray-500 dark:text-gray-600' : 'text-gray-900 dark:text-gray-100'
             )}
           >
             {task.title}

@@ -105,13 +105,13 @@ export function QuickEntry({ onAddTask, defaultStatus = 'anytime' }: QuickEntryP
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  <h2 className="text-lg font-semibold text-gray-900">New Task</h2>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">New Task</h2>
                   <button
                     onClick={() => {
                       setIsOpen(false)
                       setTitle('')
                     }}
-                    className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 active:scale-95 transition-all"
+                    className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 active:scale-95 transition-all"
                     aria-label="Close"
                   >
                     <X size={24} />
@@ -139,7 +139,7 @@ export function QuickEntry({ onAddTask, defaultStatus = 'anytime' }: QuickEntryP
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.18 }}
                   >
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Schedule for
                     </label>
                     <DatePicker value={scheduledDate} onChange={setScheduledDate} />
@@ -192,8 +192,8 @@ export function QuickEntry({ onAddTask, defaultStatus = 'anytime' }: QuickEntryP
                       className={cn(
                         'px-4 py-3 rounded-lg font-medium transition-all active:scale-98',
                         title.trim()
-                          ? 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                          : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600'
+                          : 'bg-gray-50 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
                       )}
                     >
                       Anytime
@@ -204,8 +204,8 @@ export function QuickEntry({ onAddTask, defaultStatus = 'anytime' }: QuickEntryP
                       className={cn(
                         'px-4 py-3 rounded-lg font-medium transition-all active:scale-98',
                         title.trim()
-                          ? 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                          : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600'
+                          : 'bg-gray-50 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
                       )}
                     >
                       Upcoming

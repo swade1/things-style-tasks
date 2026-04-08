@@ -45,11 +45,11 @@ export function NavigationBar({
 
       {/* Center - Title */}
       <div className="flex-1 text-center mx-4">
-        <h1 className="text-lg font-semibold text-gray-900 truncate">
+        <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-xs text-gray-500 truncate">
+          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
             {subtitle}
           </p>
         )}
@@ -60,7 +60,7 @@ export function NavigationBar({
         {onSearch && (
           <button
             onClick={onSearch}
-            className="flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-900 active:scale-95 transition-all"
+            className="flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 active:scale-95 transition-all"
             aria-label="Search"
           >
             <Search size={22} />
@@ -70,7 +70,7 @@ export function NavigationBar({
         {rightIcon && onRightAction && (
           <button
             onClick={onRightAction}
-            className="flex items-center justify-center w-10 h-10 -mr-2 text-gray-600 hover:text-gray-900 active:scale-95 transition-all"
+            className="flex items-center justify-center w-10 h-10 -mr-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 active:scale-95 transition-all"
             aria-label={rightAriaLabel || 'Action'}
           >
             {rightIcon}

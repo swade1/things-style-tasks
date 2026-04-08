@@ -114,7 +114,7 @@ export function TodayView({ onOpenSearch, focusTaskId, onFocusHandled }: TodayVi
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <p className="text-red-600 font-medium mb-2">Error loading tasks</p>
-              <p className="text-sm text-gray-600">{error}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
             </div>
           </div>
         ) : filteredTasks.length === 0 ? (

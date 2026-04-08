@@ -196,11 +196,11 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
           >
             <div className="w-10 h-1 rounded-full bg-gray-300/80 mx-auto mt-3" />
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900">Task Details</h2>
+            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Task Details</h2>
               <button
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 active:scale-95 transition-all"
+                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 active:scale-95 transition-all"
                 aria-label="Close"
               >
                 <X size={24} />
@@ -215,7 +215,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
               >
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Title
                 </label>
                 <input
@@ -224,7 +224,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   onBlur={handleTitleBlur}
-                  className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 text-base border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
                   placeholder="Task title..."
                 />
               </motion.div>
@@ -235,7 +235,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
               >
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                   <AlignLeft size={16} />
                   Notes
                 </label>
@@ -243,7 +243,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   onBlur={handleNotesBlur}
-                  className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-none"
+                  className="w-full px-4 py-3 text-base border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-none"
                   rows={4}
                   placeholder="Add notes..."
                 />
@@ -255,7 +255,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                   <Calendar size={16} />
                   When
                 </label>
@@ -266,7 +266,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                       'flex-1 px-4 py-3 rounded-lg font-medium transition-all active:scale-98',
                       task.status === 'today'
                         ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     )}
                   >
                     Today
@@ -277,7 +277,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                       'flex-1 px-4 py-3 rounded-lg font-medium transition-all active:scale-98',
                       task.status === 'anytime'
                         ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     )}
                   >
                     Anytime
@@ -288,7 +288,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                       'flex-1 px-4 py-3 rounded-lg font-medium transition-all active:scale-98',
                       task.status === 'upcoming'
                         ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     )}
                   >
                     Upcoming
@@ -308,7 +308,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
               >
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                   <ListChecks size={16} />
                   Checklist
                 </label>
@@ -362,7 +362,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                           }}
                           className={cn(
                             'flex-1 bg-transparent text-sm focus:outline-none',
-                            item.completed ? 'line-through text-gray-400' : 'text-gray-800'
+                            item.completed ? 'line-through text-gray-400 dark:text-gray-600' : 'text-gray-800 dark:text-gray-200'
                           )}
                         />
                         <button
@@ -385,7 +385,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <label htmlFor="project-select" className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <label htmlFor="project-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                   <FolderKanban size={16} />
                   Project
                 </label>
@@ -393,7 +393,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                   id="project-select"
                   value={task?.project_id || ''}
                   onChange={(e) => handleProjectAssign(e.target.value || null)}
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                 >
                   <option value="">No Project</option>
                   {projects.map((project) => (
@@ -410,7 +410,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 }}
               >
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                   <Tag size={16} />
                   Tags
                 </label>
@@ -438,7 +438,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                     <span className="text-sm text-gray-500">No tags yet</span>
                   ) : (
                     tags.map((tag) => (
-                      <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 text-sm text-gray-700">
+                      <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-300">
                         #{tag}
                         <button
                           type="button"

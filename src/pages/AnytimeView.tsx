@@ -124,7 +124,7 @@ export function AnytimeView({ onOpenSearch, focusTaskId, onFocusHandled }: Anyti
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <p className="text-red-600 font-medium mb-2">Error loading tasks</p>
-              <p className="text-sm text-gray-600">{error}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
             </div>
           </div>
         ) : filteredTasks.length === 0 ? (
@@ -158,7 +158,7 @@ export function AnytimeView({ onOpenSearch, focusTaskId, onFocusHandled }: Anyti
                         <ChevronDown size={16} className="text-gray-500" />
                       )}
                       <FolderKanban size={16} className="text-gray-500" />
-                      <h3 className="text-sm font-semibold text-gray-900">{group.title}</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{group.title}</h3>
                     </div>
                     <span className="text-xs text-gray-500 font-medium">
                       {group.tasks.length}

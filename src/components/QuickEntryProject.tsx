@@ -88,7 +88,7 @@ export function QuickEntryProject({ onAddProject }: QuickEntryProjectProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  <h2 className="text-lg font-semibold text-gray-900">New Project</h2>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">New Project</h2>
                   <button
                     onClick={() => {
                       setIsOpen(false)

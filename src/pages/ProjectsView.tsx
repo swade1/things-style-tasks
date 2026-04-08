@@ -64,17 +64,17 @@ export function ProjectsView({ onOpenSearch }: ProjectsViewProps) {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <p className="text-red-600 font-medium mb-2">Error loading projects</p>
-              <p className="text-sm text-gray-600">{error}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
             </div>
           </div>
         ) : projects.length === 0 ? (
           <div className="flex items-center justify-center h-64 px-4">
             <div className="things-empty-card text-center px-8 py-8 rounded-[24px] max-w-sm w-full">
               <div className="text-6xl mb-4">📁</div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 No projects yet
               </h2>
-              <p className="text-gray-600 text-sm leading-6">
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-6">
                 Tap the + button to create your first project
               </p>
             </div>
@@ -104,8 +104,8 @@ export function ProjectsView({ onOpenSearch }: ProjectsViewProps) {
           >
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-gray-900">Settings & About</p>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Settings & About</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   Account, sync details, shortcuts, and project credits{user?.email ? ` • ${user.email}` : ''}
                 </p>
               </div>

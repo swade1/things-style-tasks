@@ -131,10 +131,10 @@ export function AnytimeView({ onOpenSearch, focusTaskId, onFocusHandled }: Anyti
           <div className="flex items-center justify-center h-64 px-4">
             <div className="things-empty-card text-center px-8 py-8 rounded-[24px] max-w-sm w-full">
               <div className="text-6xl mb-4">📥</div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                {searchQuery ? 'No matching tasks' : 'No tasks in Anytime'}
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                {searchQuery ? 'No matching tasks' : 'Your Anytime list is empty'}
               </h2>
-              <p className="text-gray-600 text-sm leading-6">
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-6">
                 {searchQuery ? 'Try a different search term' : 'This is your inbox for unscheduled tasks'}
               </p>
             </div>

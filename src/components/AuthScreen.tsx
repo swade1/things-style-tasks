@@ -37,22 +37,22 @@ export function AuthScreen({ loading, error, onSignIn, onSignUp }: AuthScreenPro
       >
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">✅</div>
-          <h1 className="text-2xl font-semibold text-gray-900">Things-Style Tasks</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Things-Style Tasks</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {isSignUp ? 'Create your account to sync your tasks.' : 'Sign in to continue.'}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
             <div className="relative">
               <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:outline-none focus:border-blue-500"
                 placeholder="you@example.com"
                 required
               />
@@ -60,14 +60,14 @@ export function AuthScreen({ loading, error, onSignIn, onSignUp }: AuthScreenPro
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
             <div className="relative">
               <LockKeyhole size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:outline-none focus:border-blue-500"
                 placeholder="At least 6 characters"
                 minLength={6}
                 required

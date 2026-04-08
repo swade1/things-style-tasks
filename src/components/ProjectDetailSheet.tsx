@@ -153,11 +153,11 @@ export function ProjectDetailSheet({ project, isOpen, onClose, onUpdate, onDelet
           >
             <div className="w-10 h-1 rounded-full bg-gray-300/80 mx-auto mt-3" />
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900">Project Details</h2>
+            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Project Details</h2>
               <button
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 active:scale-95 transition-all"
+                className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 active:scale-95 transition-all"
                 aria-label="Close"
               >
                 <X size={24} />
@@ -172,7 +172,7 @@ export function ProjectDetailSheet({ project, isOpen, onClose, onUpdate, onDelet
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
               >
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Project Name
                 </label>
                 <input
@@ -181,7 +181,7 @@ export function ProjectDetailSheet({ project, isOpen, onClose, onUpdate, onDelet
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   onBlur={handleTitleBlur}
-                  className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 text-base border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
                   placeholder="Project name..."
                 />
               </motion.div>
@@ -192,7 +192,7 @@ export function ProjectDetailSheet({ project, isOpen, onClose, onUpdate, onDelet
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
               >
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                   <AlignLeft size={16} />
                   Notes
                 </label>
@@ -200,7 +200,7 @@ export function ProjectDetailSheet({ project, isOpen, onClose, onUpdate, onDelet
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   onBlur={handleNotesBlur}
-                  className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-none"
+                  className="w-full px-4 py-3 text-base border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:border-blue-500 focus:outline-none transition-colors resize-none"
                   rows={4}
                   placeholder="Add notes..."
                 />
@@ -212,7 +212,7 @@ export function ProjectDetailSheet({ project, isOpen, onClose, onUpdate, onDelet
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                   Tasks ({incompleteTasks.length})
                 </label>
 

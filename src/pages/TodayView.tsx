@@ -27,10 +27,10 @@ export function TodayView({ onOpenSearch, focusTaskId, onFocusHandled }: TodayVi
     matchesTaskSearch(task, searchQuery, task.project_id ? projectTitleMap.get(task.project_id) : undefined)
   )
 
-  // Update display tasks when filtered tasks change
+  // Update display tasks when filtered tasks change (only when backend data changes, not during drag)
   useEffect(() => {
     setDisplayTasks(filteredTasks)
-  }, [filteredTasks])
+  }, [filteredTasks.map(t => t.id).join(',')])
 
   useEffect(() => {
     if (!focusTaskId) return

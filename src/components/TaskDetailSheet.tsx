@@ -319,7 +319,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                     value={newChecklistItem}
                     onChange={(e) => setNewChecklistItem(e.target.value)}
                     placeholder="Add checklist item..."
-                    className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-100 rounded-lg focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"
                   />
                   <button
                     type="submit"
@@ -333,18 +333,18 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
 
                 <div className="space-y-2">
                   {checklistItems.length === 0 ? (
-                    <div className="px-4 py-6 border border-dashed border-gray-200 rounded-lg text-center">
-                      <p className="text-sm text-gray-500">No checklist items yet</p>
+                    <div className="px-4 py-6 border border-dashed border-gray-200 dark:border-gray-700 rounded-lg text-center">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">No checklist items yet</p>
                     </div>
                   ) : (
                     checklistItems.map((item) => (
-                      <div key={item.id} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
+                      <div key={item.id} className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                         <button
                           type="button"
                           onClick={() => handleToggleChecklistItem(item.id)}
                           className={cn(
                             'flex-shrink-0 w-5 h-5 rounded-full border flex items-center justify-center transition-colors',
-                            item.completed ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 text-transparent'
+                            item.completed ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 dark:border-gray-500 text-transparent'
                           )}
                           aria-label={item.completed ? 'Mark checklist item incomplete' : 'Mark checklist item complete'}
                         >
@@ -368,7 +368,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                         <button
                           type="button"
                           onClick={() => handleRemoveChecklistItem(item.id)}
-                          className="text-gray-400 hover:text-red-500 transition-colors"
+                          className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
                           aria-label="Delete checklist item"
                         >
                           <X size={14} />

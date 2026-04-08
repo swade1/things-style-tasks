@@ -19,6 +19,7 @@ export function UpcomingView({ onOpenSearch, focusTaskId, onFocusHandled }: Upco
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({})
+  const [displayGroupTasks, setDisplayGroupTasks] = useState<Map<string, Task[]>>(new Map())
   const { tasks, loading, error, createTask, toggleTask, updateTask, reorderTasks, deleteTask } = useTasks('upcoming')
   const { projects } = useProjects('active')
   const projectTitleMap = new Map(projects.map(project => [project.id, project.title]))
@@ -41,6 +42,30 @@ export function UpcomingView({ onOpenSearch, focusTaskId, onFocusHandled }: Upco
       }))
       .filter(group => group.tasks.length > 0)
   ].filter(group => group.tasks.length > 0)
+
+  // Update display tasks when grouped tasks change
+  useEffect(() => {
+    const newMap = new Map<string, Task[]>()
+    groupedTasks.forEach(group => {
+      newMap.set(group.id, group.tasks)
+    })
+    setDisplayGroupTasks(newMap)
+  }, [groupedTasks.map(g => g.tasks.map(t => t.id).join(',')).join('|')])
+
+  const handleReorderGroup = (groupId: string, reorderedTasks: Task[]) => {
+    setDisplayGroupTasks(prev => {
+      const newMap = new Map(prev)
+      newMap.set(groupId, reorderedTasks)
+      return newMap
+    })
+  }
+
+  const handleDragEnd = (groupId: string) => {
+    const groupTasks = displayGroupTasks.get(groupId)
+    if (groupTasks) {
+      reorderTasks(groupTasks)
+    }
+  }
 
   useEffect(() => {
     if (!focusTaskId) return
@@ -166,15 +191,21 @@ export function UpcomingView({ onOpenSearch, focusTaskId, onFocusHandled }: Upco
                   </button>
 
                   {!isCollapsed && (
-                    <Reorder.Group axis="y" values={group.tasks} onReorder={reorderTasks} className="list-none">
+                    <Reorder.Group 
+                      axis="y" 
+                      values={displayGroupTasks.get(group.id) || group.tasks} 
+                      onReorder={(reordered) => handleReorderGroup(group.id, reordered)} 
+                      className="list-none"
+                    >
                       <AnimatePresence mode="popLayout">
-                        {group.tasks.map((task) => (
+                        {(displayGroupTasks.get(group.id) || group.tasks).map((task) => (
                           <ReorderableTaskItem
                             key={task.id}
                             task={task}
                             onToggle={toggleTask}
                             onClick={handleTaskClick}
                             onDelete={deleteTask}
+                            onDragEnd={() => handleDragEnd(group.id)}
                           />
                         ))}
                       </AnimatePresence>

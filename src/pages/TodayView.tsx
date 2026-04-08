@@ -18,6 +18,7 @@ export function TodayView({ onOpenSearch, focusTaskId, onFocusHandled }: TodayVi
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [displayTasks, setDisplayTasks] = useState<Task[]>([])
   const { tasks, loading, error, createTask, toggleTask, updateTask, reorderTasks, deleteTask } = useTasks('today')
   const { projects } = useProjects('active')
   const projectTitleMap = new Map(projects.map(project => [project.id, project.title]))
@@ -25,6 +26,11 @@ export function TodayView({ onOpenSearch, focusTaskId, onFocusHandled }: TodayVi
   const filteredTasks = tasks.filter((task) =>
     matchesTaskSearch(task, searchQuery, task.project_id ? projectTitleMap.get(task.project_id) : undefined)
   )
+
+  // Update display tasks when filtered tasks change
+  useEffect(() => {
+    setDisplayTasks(filteredTasks)
+  }, [filteredTasks])
 
   useEffect(() => {
     if (!focusTaskId) return
@@ -131,15 +137,16 @@ export function TodayView({ onOpenSearch, focusTaskId, onFocusHandled }: TodayVi
           </div>
         ) : (
           <div className="things-surface rounded-[24px] mx-4 mt-4 overflow-hidden">
-            <Reorder.Group axis="y" values={filteredTasks} onReorder={reorderTasks} className="list-none">
+            <Reorder.Group axis="y" values={displayTasks} onReorder={setDisplayTasks} className="list-none">
               <AnimatePresence mode="popLayout">
-                {filteredTasks.map((task) => (
+                {displayTasks.map((task) => (
                   <ReorderableTaskItem
                     key={task.id}
                     task={task}
                     onToggle={toggleTask}
                     onClick={handleTaskClick}
                     onDelete={deleteTask}
+                    onDragEnd={() => reorderTasks(displayTasks)}
                   />
                 ))}
               </AnimatePresence>

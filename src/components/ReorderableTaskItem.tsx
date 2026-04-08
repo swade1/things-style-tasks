@@ -7,9 +7,10 @@ interface ReorderableTaskItemProps {
   onToggle: (taskId: string) => void
   onClick: (taskId: string) => void
   onDelete?: (taskId: string) => void
+  onDragEnd?: () => void
 }
 
-export function ReorderableTaskItem({ task, onToggle, onClick, onDelete }: ReorderableTaskItemProps) {
+export function ReorderableTaskItem({ task, onToggle, onClick, onDelete, onDragEnd }: ReorderableTaskItemProps) {
   const dragControls = useDragControls()
 
   return (
@@ -20,6 +21,7 @@ export function ReorderableTaskItem({ task, onToggle, onClick, onDelete }: Reord
       dragControls={dragControls}
       className="list-none"
       whileDrag={{ scale: 1.01, zIndex: 10 }}
+      onDragEnd={onDragEnd}
     >
       <TaskRow
         task={task}

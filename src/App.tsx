@@ -48,6 +48,16 @@ function AuthenticatedApp() {
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false)
   const [focusedTask, setFocusedTask] = useState<{ taskId: string; view: Exclude<ViewType, 'projects'> } | null>(null)
 
+  // Initialize theme from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [])
+
   // Fetch task counts for badges
   const { tasks: todayTasks } = useTasks('today')
   const { tasks: anytimeTasks } = useTasks('anytime')

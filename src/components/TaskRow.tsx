@@ -88,8 +88,8 @@ export function TaskRow({ task, onToggle, onClick, onDelete, onReorderStart, cla
       {/* Task row */}
       <motion.div
         className={cn(
-          'flex items-center gap-3 px-4 py-3 min-h-[48px] bg-white/85 border-b border-slate-100',
-          'hover:bg-white active:bg-slate-50/90 transition-colors cursor-pointer relative',
+          'flex items-center gap-3 px-4 py-3 min-h-[48px] bg-white/85 dark:bg-gray-800/90 border-b border-slate-100 dark:border-gray-700',
+          'hover:bg-white dark:hover:bg-gray-700 active:bg-slate-50/90 dark:active:bg-gray-700/70 transition-colors cursor-pointer relative',
           isCompleted && 'opacity-60',
           className
         )}
@@ -157,7 +157,7 @@ export function TaskRow({ task, onToggle, onClick, onDelete, onReorderStart, cla
         <div className="flex flex-wrap items-center gap-2 mt-1">
           {/* Scheduled date */}
           {hasScheduledDate && task.scheduled_date && (
-            <span className="flex items-center gap-1 text-xs text-blue-600">
+            <span className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
               <Calendar size={12} />
               {formatDate(task.scheduled_date)}
             </span>
@@ -165,7 +165,7 @@ export function TaskRow({ task, onToggle, onClick, onDelete, onReorderStart, cla
 
           {/* Checklist progress */}
           {hasChecklist && (
-            <span className="flex items-center gap-1 text-xs text-gray-500">
+            <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
               <ListChecks size={12} />
               {completedItems}/{task.checklist_items.length}
             </span>
@@ -173,26 +173,26 @@ export function TaskRow({ task, onToggle, onClick, onDelete, onReorderStart, cla
 
           {/* Notes indicator */}
           {task.notes && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-gray-500">
               📝
             </span>
           )}
 
           {/* Recurring indicator */}
           {isRecurring && (
-            <span className="flex items-center gap-1 text-xs text-purple-600" title={`Repeats ${task.recurrence_rule}`}>
+            <span className="flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400" title={`Repeats ${task.recurrence_rule}`}>
               <Repeat size={12} />
             </span>
           )}
 
           {/* Tags */}
           {hasTags && task.tags.slice(0, 2).map((tag) => (
-            <span key={tag} className="px-2 py-0.5 rounded-full bg-gray-100 text-[11px] text-gray-600">
+            <span key={tag} className="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-[11px] text-gray-600 dark:text-gray-300">
               #{tag}
             </span>
           ))}
           {hasTags && task.tags.length > 2 && (
-            <span className="text-[11px] text-gray-500">+{task.tags.length - 2}</span>
+            <span className="text-[11px] text-gray-500 dark:text-gray-400">+{task.tags.length - 2}</span>
           )}
         </div>
       </div>

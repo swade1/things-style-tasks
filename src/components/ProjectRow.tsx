@@ -101,8 +101,8 @@ export function ProjectRow({
       {/* Project row */}
       <motion.div
         className={cn(
-          'flex items-center gap-3 px-4 py-3 min-h-[48px] bg-white/85 border-b border-slate-100',
-          'cursor-pointer relative hover:bg-white transition-colors',
+          'flex items-center gap-3 px-4 py-3 min-h-[48px] bg-white/85 dark:bg-gray-800/90 border-b border-slate-100 dark:border-gray-700',
+          'cursor-pointer relative hover:bg-white dark:hover:bg-gray-700 transition-colors',
           isCompleted && 'opacity-60',
           className
         )}
@@ -165,7 +165,7 @@ export function ProjectRow({
           {/* Task count */}
           {taskCount > 0 && (
             <div className="flex items-center gap-1 mt-1">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
                 {taskCount} {taskCount === 1 ? 'task' : 'tasks'}
               </span>
             </div>
@@ -173,7 +173,7 @@ export function ProjectRow({
         </div>
 
         {/* Chevron */}
-        <ChevronRight size={20} className="text-gray-400 flex-shrink-0" />
+        <ChevronRight size={20} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
       </motion.div>
     </div>
   )

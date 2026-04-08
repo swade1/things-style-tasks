@@ -154,8 +154,8 @@ export function ProjectRow({
             {/* Title */}
             <span
               className={cn(
-                'text-[15px] font-medium truncate',
-                isCompleted ? 'line-through text-gray-500 dark:text-gray-600' : 'text-gray-900 dark:text-gray-100'
+                'text-[15px] font-medium truncate text-gray-900 dark:text-gray-100',
+                isCompleted && 'line-through'
               )}
             >
               {project.title}

@@ -149,18 +149,18 @@ export function UpcomingView({ onOpenSearch, focusTaskId, onFocusHandled }: Upco
                   <button
                     type="button"
                     onClick={() => toggleGroup(group.id)}
-                    className="w-full px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between text-left"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-600 flex items-center justify-between text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       {isCollapsed ? (
-                        <ChevronRight size={16} className="text-gray-500" />
+                        <ChevronRight size={16} className="text-gray-500 dark:text-gray-400" />
                       ) : (
-                        <ChevronDown size={16} className="text-gray-500" />
+                        <ChevronDown size={16} className="text-gray-500 dark:text-gray-400" />
                       )}
-                      <FolderKanban size={16} className="text-gray-500" />
+                      <FolderKanban size={16} className="text-gray-500 dark:text-gray-400" />
                       <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{group.title}</h3>
                     </div>
-                    <span className="text-xs text-gray-500 font-medium">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                       {group.tasks.length}
                     </span>
                   </button>

@@ -460,7 +460,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <label htmlFor="recurrence-select" className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <label htmlFor="recurrence-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                   <Repeat size={16} />
                   Repeat
                 </label>
@@ -468,7 +468,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                   id="recurrence-select"
                   value={task?.recurrence_rule || ''}
                   onChange={(e) => handleRecurrenceChange(e.target.value || null)}
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                 >
                   <option value="">Never</option>
                   <option value="daily">Daily</option>
@@ -476,7 +476,7 @@ export function TaskDetailSheet({ task, isOpen, onClose, onUpdate, onDelete }: T
                   <option value="monthly">Monthly</option>
                 </select>
                 {task?.recurrence_rule && (
-                  <p className="mt-2 text-xs text-gray-500">
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     When completed, a new instance will be created for the next occurrence
                   </p>
                 )}

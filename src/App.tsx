@@ -53,7 +53,7 @@ const viewLoadingFallback = (
   </div>
 )
 
-function MainApp({ userId }: { userId: string }) {
+function MainApp({ userId: _userId }: { userId: string }) {
   const [activeView, setActiveView] = useState<ViewType>('today')
   const [direction, setDirection] = useState<'left' | 'right'>('right')
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false)

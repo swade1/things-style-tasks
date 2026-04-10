@@ -15,7 +15,7 @@ interface SubscriptionPaywallProps {
 export function SubscriptionPaywall({ 
   userId,
   email,
-  onSubscribe, 
+  onSubscribe: _onSubscribe, 
   onDismiss,
   isTrialExpired = false,
   hasExistingSubscription = false

@@ -1,16 +1,14 @@
 import { motion } from 'framer-motion'
 import { Check, Loader2 } from 'lucide-react'
-import { createCheckoutSession } from '@/lib/stripe'
 import { useState } from 'react'
 
 interface PaywallScreenProps {
   userId: string
   email: string
-  onStartTrial: () => void
   progress: number
 }
 
-export function PaywallScreen({ userId, email, onStartTrial, progress }: PaywallScreenProps) {
+export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   

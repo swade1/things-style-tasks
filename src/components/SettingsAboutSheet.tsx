@@ -116,7 +116,7 @@ export function SettingsAboutSheet({ isOpen, onClose, email, userId, onSignOut }
 
             <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100 dark:border-gray-700">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Settings & About</h2>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Settings & About [DEBUG v2]</h2>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Small details that make the app feel complete.</p>
                 <p className="text-xs text-orange-600 font-bold mt-1">DEBUG v2 - userId: {userId || 'MISSING'} - subInfo: {subscriptionInfo ? 'YES' : 'NO'}</p>
               </div>

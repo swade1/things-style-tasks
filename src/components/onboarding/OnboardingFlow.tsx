@@ -20,11 +20,11 @@ interface OnboardingFlowProps {
 
 type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
-export function OnboardingFlow({ userId, userEmail, onComplete }: OnboardingFlowProps) {
+export function OnboardingFlow({ userId, userEmail, onComplete: _onComplete }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(1)
-  const [selectedGoals, setSelectedGoals] = useState<string[]>([])
+  const [_selectedGoals, setSelectedGoals] = useState<string[]>([])
   const [selectedPains, setSelectedPains] = useState<string[]>([])
-  const [selectedPreferences, setSelectedPreferences] = useState<string[]>([])
+  const [_selectedPreferences, setSelectedPreferences] = useState<string[]>([])
   const [createdTasks, setCreatedTasks] = useState<Task[]>([])
 
   const handleGoalsContinue = (goals: string[]) => {
@@ -50,27 +50,6 @@ export function OnboardingFlow({ userId, userEmail, onComplete }: OnboardingFlow
   const handleSkipAccount = () => {
     // Skip directly to paywall
     setCurrentStep(10)
-  }
-
-  const handleStartTrial = () => {
-    // TODO: Implement actual payment integration for 7-day trial
-    // For now, mark as trial subscription and complete onboarding
-    completeOnboarding('trial')
-  }
-
-  const completeOnboarding = (subscriptionType: 'trial' | 'paid' | 'free' = 'free') => {
-    // Mark onboarding as complete in localStorage
-    localStorage.setItem('onboarding_completed', 'true')
-    // Save user preferences and subscription choice
-    localStorage.setItem('onboarding_data', JSON.stringify({
-      goals: selectedGoals,
-      pains: selectedPains,
-      preferences: selectedPreferences,
-      subscriptionType, // Store which option they chose
-      trialStartDate: subscriptionType === 'trial' ? new Date().toISOString() : undefined,
-      completedAt: new Date().toISOString()
-    }))
-    onComplete()
   }
 
   const getProgress = (): number => {
@@ -178,7 +157,6 @@ export function OnboardingFlow({ userId, userEmail, onComplete }: OnboardingFlow
             <PaywallScreen
               userId={userId}
               email={userEmail}
-              onStartTrial={handleStartTrial}
               progress={getProgress()}
             />
           )}

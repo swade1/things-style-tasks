@@ -117,6 +117,14 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
 
       {/* CTA buttons */}
       <div className="space-y-3 flex-1 flex flex-col justify-end">
+        {/* TEST BUTTON */}
+        <button
+          onClick={() => setDebugInfo('TEST button works!')}
+          className="w-full bg-red-600 text-white font-bold py-4 rounded-xl"
+        >
+          TEST CLICK ME (If this works, scroll down for real button)
+        </button>
+        
         {debugInfo && (
           <div className="bg-yellow-100 border border-yellow-400 text-yellow-900 px-4 py-3 rounded text-sm mb-2">
             DEBUG: {debugInfo}
@@ -133,14 +141,10 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
           </motion.p>
         )}
 
-        <motion.button
+        <button
           onClick={handleStartTrial}
           disabled={loading}
           className="w-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-4 px-8 rounded-2xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          whileTap={{ scale: loading ? 1 : 0.98 }}
         >
           {loading ? (
             <>
@@ -150,7 +154,7 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
           ) : (
             'Try Free for 7 Days'
           )}
-        </motion.button>
+        </button>
 
         {/* Footer */}
         <motion.p

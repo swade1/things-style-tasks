@@ -18,9 +18,9 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col px-6 py-12 bg-gray-50">
+    <div className="h-full overflow-y-auto flex flex-col px-6 py-12 bg-gray-50">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-200 rounded-full mb-8">
+      <div className="w-full h-1 bg-gray-200 rounded-full mb-8 flex-shrink-0">
         <div 
           className="h-full bg-blue-600 rounded-full transition-all"
           style={{ width: `${progress}%` }}
@@ -28,14 +28,14 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
       </div>
 
       {/* App icon */}
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-6 flex-shrink-0">
         <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
           <Check className="w-8 h-8 text-white" strokeWidth={3} />
         </div>
       </div>
 
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 flex-shrink-0">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
           Get the most out of your tasks
         </h1>
@@ -45,7 +45,7 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
       </div>
 
       {/* Features */}
-      <div className="space-y-3 mb-8">
+      <div className="space-y-3 mb-8 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-xl">✨</div>
           <div className="text-gray-900 font-medium">Unlimited projects</div>
@@ -65,7 +65,7 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
       </div>
 
       {/* Pricing */}
-      <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-6 text-white mb-6 text-center">
+      <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-6 text-white mb-6 text-center flex-shrink-0">
         <div className="text-2xl font-bold mb-2">$4.99/month</div>
         <div className="text-sm text-blue-100">Cancel anytime</div>
       </div>
@@ -74,7 +74,7 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
       <button
         onClick={handleStartTrial}
         disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-2xl shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-2xl shadow-lg disabled:opacity-50 flex items-center justify-center gap-2 flex-shrink-0"
       >
         {loading ? (
           <>
@@ -87,7 +87,7 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
       </button>
 
       {/* Footer */}
-      <p className="text-center text-xs text-gray-500 mt-6">
+      <p className="text-center text-xs text-gray-500 mt-6 pb-6 flex-shrink-0">
         By continuing, you agree to our Terms and Privacy Policy
       </p>
     </div>

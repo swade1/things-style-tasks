@@ -148,6 +148,16 @@ export function SettingsAboutSheet({ isOpen, onClose, email, userId, onSignOut }
                         </span>
                       </p>
                     )}
+                    {!subscriptionInfo && userId && (
+                      <p className="text-xs text-orange-600 dark:text-orange-400 mt-2">
+                        Debug: No subscription data found for user
+                      </p>
+                    )}
+                    {!userId && (
+                      <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+                        Debug: No userId provided
+                      </p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Realtime sync and offline-ready PWA support are enabled.</p>
                   </div>
                 </div>

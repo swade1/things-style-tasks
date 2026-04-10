@@ -131,6 +131,7 @@ export function ProjectsView({ onOpenSearch }: ProjectsViewProps) {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         email={user?.email}
+        userId={user?.id}
         onSignOut={async () => {
           setIsSettingsOpen(false)
           await signOut()

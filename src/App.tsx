@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { BottomTabNavigation } from '@/components'
 import { useAuth, useTasks, useProjects } from '@/hooks'
+import { getSubscriptionStatus } from '@/lib/subscription'
 import type { Task, ViewType } from '@/types'
 import './App.css'
 
@@ -31,9 +32,19 @@ const UpcomingView = lazy(async () => {
   return { default: module.UpcomingView }
 })
 
-const ProjectsView = lazy(async () => {
+const ProjectsView = lazy( async () => {
   const module = await import('@/pages/ProjectsView')
   return { default: module.ProjectsView }
+})
+
+const OnboardingFlow = lazy(async () => {
+  const module = await import('@/components/onboarding')
+  return { default: module.OnboardingFlow }
+})
+
+const SubscriptionPaywall = lazy(async () => {
+  const module = await import('@/components/SubscriptionPaywall')
+  return { default: module.SubscriptionPaywall }
 })
 
 const viewLoadingFallback = (
@@ -42,7 +53,7 @@ const viewLoadingFallback = (
   </div>
 )
 
-function AuthenticatedApp() {
+function MainApp({ userId }: { userId: string }) {
   const [activeView, setActiveView] = useState<ViewType>('today')
   const [direction, setDirection] = useState<'left' | 'right'>('right')
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false)
@@ -59,10 +70,10 @@ function AuthenticatedApp() {
   }, [])
 
   // Fetch task counts for badges
-  const { tasks: todayTasks } = useTasks('today')
-  const { tasks: anytimeTasks } = useTasks('anytime')
-  const { tasks: upcomingTasks } = useTasks('upcoming')
-  const { projects } = useProjects('active')
+  const { tasks: todayTasks, loading: loadingToday } = useTasks('today')
+  const { tasks: anytimeTasks, loading: loadingAnytime } = useTasks('anytime')
+  const { tasks: upcomingTasks, loading: loadingUpcoming } = useTasks('upcoming')
+  const { projects, loading: loadingProjects } = useProjects('active')
 
   // Determine view order for slide direction
   const viewOrder: ViewType[] = ['today', 'anytime', 'upcoming', 'projects']
@@ -107,6 +118,16 @@ function AuthenticatedApp() {
     if (activeView !== targetView) {
       handleTabChange(targetView)
     }
+  }
+
+  // Show loading state while initial data is fetching
+  const isLoadingInitialData = loadingToday || loadingAnytime || loadingUpcoming || loadingProjects
+  if (isLoadingInitialData) {
+    return (
+      <div className="h-screen flex items-center justify-center things-screen">
+        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+      </div>
+    )
   }
 
   // Slide variants for view transitions
@@ -206,8 +227,81 @@ function AuthenticatedApp() {
   )
 }
 
+function AuthenticatedApp({ userId, userEmail }: { userId: string; userEmail: string }) {
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    return !localStorage.getItem('onboarding_completed')
+  })
+  const [showPaywall, setShowPaywall] = useState(false)
+
+  // Check trial status on mount and periodically
+  useEffect(() => {
+    const checkTrialStatus = async () => {
+      const status = await getSubscriptionStatus(userId)
+      if (status === 'expired') {
+        setShowPaywall(true)
+      }
+    }
+
+    checkTrialStatus()
+    
+    // Check every hour in case trial expires while app is open
+    const interval = setInterval(() => void checkTrialStatus(), 60 * 60 * 1000)
+    
+    return () => clearInterval(interval)
+  }, [userId])
+
+  const handleSubscribe = () => {
+    // After successful subscription, hide paywall and reload
+    setShowPaywall(false)
+    window.location.reload()
+  }
+
+  if (showOnboarding) {
+    return (
+      <Suspense fallback={viewLoadingFallback}>
+        <OnboardingFlow
+          userId={userId}
+          userEmail={userEmail}
+          onComplete={() => {
+            setShowOnboarding(false)
+          }}
+        />
+      </Suspense>
+    )
+  }
+
+  return (
+    <>
+      <MainApp userId={userId} />
+      
+      {/* Show subscription paywall if trial expired */}
+      {showPaywall && (
+        <Suspense fallback={null}>
+          <SubscriptionPaywall
+            userId={userId}
+            email={userEmail}
+            isTrialExpired={true}
+            onSubscribe={handleSubscribe}
+          />
+        </Suspense>
+      )}
+    </>
+  )
+}
+
 function App() {
   const { user, loading, error, signIn, signUp } = useAuth()
+
+  // Handle successful Stripe checkout redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('success') === 'true') {
+      // Clear onboarding status - user has subscribed
+      localStorage.setItem('onboarding_completed', 'true')
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [])
 
   if (loading && !user) {
     return (
@@ -236,7 +330,7 @@ function App() {
     )
   }
 
-  return <AuthenticatedApp />
+  return <AuthenticatedApp userId={user.id} userEmail={user.email || ''} />
 }
 
 export default App

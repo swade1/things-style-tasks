@@ -1,0 +1,12 @@
+{
+  "tasks": {
+    "dev": "deno run --allow-all --watch=static/,routes/ dev.ts"
+  },
+  "imports": {
+    "stripe": "https://esm.sh/stripe@14.10.0?target=deno",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.0"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window"]
+  }
+}

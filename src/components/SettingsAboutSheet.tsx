@@ -1,15 +1,17 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { BookOpen, ExternalLink, Info, LogOut, Moon, Search, ShieldCheck, Smartphone, Sparkles, Sun, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { getUserSubscription } from '@/lib/stripe'
 
 interface SettingsAboutSheetProps {
   isOpen: boolean
   onClose: () => void
   email?: string | null
+  userId?: string
   onSignOut: () => void | Promise<void> | Promise<boolean>
 }
 
-export function SettingsAboutSheet({ isOpen, onClose, email, onSignOut }: SettingsAboutSheetProps) {
+export function SettingsAboutSheet({ isOpen, onClose, email, userId, onSignOut }: SettingsAboutSheetProps) {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('theme')
@@ -17,6 +19,50 @@ export function SettingsAboutSheet({ isOpen, onClose, email, onSignOut }: Settin
     }
     return 'light'
   })
+  
+  const [subscriptionInfo, setSubscriptionInfo] = useState<{
+    status: string
+    date: string
+    label: string
+  } | null>(null)
+
+  // Fetch subscription data when opened
+  useEffect(() => {
+    if (!isOpen || !userId) return
+
+    const fetchSubscription = async () => {
+      try {
+        const subscription = await getUserSubscription(userId)
+        
+        if (subscription) {
+          if (subscription.status === 'trialing' && subscription.trial_end) {
+            const trialEnd = new Date(subscription.trial_end)
+            setSubscriptionInfo({
+              status: 'trialing',
+              date: trialEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+              label: '7-day free trial'
+            })
+          } else if (subscription.status === 'active' && subscription.current_period_end) {
+            const renewDate = new Date(subscription.current_period_end)
+            setSubscriptionInfo({
+              status: 'active',
+              date: renewDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+              label: 'Monthly subscription'
+            })
+          } else {
+            setSubscriptionInfo(null)
+          }
+        } else {
+          setSubscriptionInfo(null)
+        }
+      } catch (err) {
+        console.error('Error fetching subscription:', err)
+        setSubscriptionInfo(null)
+      }
+    }
+
+    void fetchSubscription()
+  }, [isOpen, userId])
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -88,11 +134,20 @@ export function SettingsAboutSheet({ isOpen, onClose, email, onSignOut }: Settin
                   <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
                     <ShieldCheck size={18} />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Account & Sync</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                       Signed in as <span className="font-medium text-gray-800 dark:text-gray-200">{email || 'your account'}</span>
                     </p>
+                    {subscriptionInfo && (
+                      <p className="text-sm text-gray-800 dark:text-gray-200 mt-2">
+                        <span className="font-medium">{subscriptionInfo.label}</span>
+                        {' • '}
+                        <span className="text-gray-600 dark:text-gray-400">
+                          {subscriptionInfo.status === 'trialing' ? 'Expires' : 'Renews'} {subscriptionInfo.date}
+                        </span>
+                      </p>
+                    )}
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Realtime sync and offline-ready PWA support are enabled.</p>
                   </div>
                 </div>

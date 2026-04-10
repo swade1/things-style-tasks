@@ -72,13 +72,62 @@ export function useTasks(status?: TaskStatus) {
         throw fetchError
       }
 
-      const normalizedTasks = (data || []).map(task => normalizeTask(task as Task))
+      // Auto-advance overdue recurring tasks
+      const today = getTodayLocalDate()
+      const tasksToUpdate: Task[] = []
+      
+      for (const task of (data || [])) {
+        // Check if this is an uncompleted recurring task with a past date
+        if (
+          task.recurrence_rule &&
+          task.scheduled_date &&
+          task.scheduled_date < today &&
+          task.status !== 'completed'
+        ) {
+          // Calculate the next occurrence from the scheduled date
+          let nextDate = task.scheduled_date
+          while (nextDate < today) {
+            nextDate = calculateNextOccurrenceFromDate(nextDate, task.recurrence_rule)
+          }
+          
+          // Update the task's scheduled date
+          tasksToUpdate.push({ ...task, scheduled_date: nextDate })
+        }
+      }
 
-      const filteredTasks = status
-        ? normalizedTasks.filter(task => task.status === status)
-        : normalizedTasks
-
-      setTasks(filteredTasks)
+      // Batch update overdue recurring tasks in database
+      if (tasksToUpdate.length > 0) {
+        const updates = tasksToUpdate.map(task => 
+          supabase
+            .from('tasks')
+            .update({ scheduled_date: task.scheduled_date })
+            .eq('id', task.id)
+        )
+        
+        await Promise.all(updates)
+        
+        // Refetch to get updated data
+        const { data: updatedData } = await supabase
+          .from('tasks')
+          .select('*')
+          .eq('user_id', userId)
+          .order('position', { ascending: true })
+          .order('created_at', { ascending: false })
+        
+        if (updatedData) {
+          const normalizedTasks = updatedData.map(task => normalizeTask(task as Task))
+          const filteredTasks = status
+            ? normalizedTasks.filter(task => task.status === status)
+            : normalizedTasks
+          setTasks(filteredTasks)
+        }
+      } else {
+        const normalizedTasks = (data || []).map(task => normalizeTask(task as Task))
+        const filteredTasks = status
+          ? normalizedTasks.filter(task => task.status === status)
+          : normalizedTasks
+        setTasks(filteredTasks)
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch tasks'
       setError(errorMessage)
@@ -87,6 +136,29 @@ export function useTasks(status?: TaskStatus) {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Calculate next occurrence date based on recurrence rule (helper for auto-advancing)
+  const calculateNextOccurrenceFromDate = (currentDate: string, rule: string): string => {
+    const base = new Date(currentDate)
+    const next = new Date(base)
+
+    switch (rule) {
+      case 'daily':
+        next.setDate(next.getDate() + 1)
+        break
+      case 'weekly':
+        next.setDate(next.getDate() + 7)
+        break
+      case 'monthly':
+        next.setMonth(next.getMonth() + 1)
+        break
+      default:
+        // For custom RRULE, default to daily
+        next.setDate(next.getDate() + 1)
+    }
+
+    return next.toISOString().split('T')[0] // Return YYYY-MM-DD
   }
 
   // Create task
@@ -393,8 +465,11 @@ export function useTasks(status?: TaskStatus) {
         return
       }
 
+      // Use a unique channel name for each hook instance to avoid conflicts
+      const channelName = `tasks-changes-${status ?? 'all'}-${Math.random().toString(36).substring(7)}`
+      
       channel = supabase
-        .channel(`tasks-changes-${status ?? 'all'}`)
+        .channel(channelName)
         .on(
           'postgres_changes',
           {

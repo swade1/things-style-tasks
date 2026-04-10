@@ -227,8 +227,11 @@ export function useProjects(status?: ProjectStatus) {
         return
       }
 
+      // Use a unique channel name for each hook instance to avoid conflicts
+      const channelName = `projects-changes-${status ?? 'all'}-${Math.random().toString(36).substring(7)}`
+
       channel = supabase
-        .channel(`projects-changes-${status ?? 'all'}`)
+        .channel(channelName)
         .on(
           'postgres_changes',
           {

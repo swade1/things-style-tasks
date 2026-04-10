@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { Check, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -10,178 +9,87 @@ interface PaywallScreenProps {
 
 export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [debugInfo, setDebugInfo] = useState<string>('')
-  
-  const premiumFeatures = [
-    { icon: '✨', text: 'Unlimited projects' },
-    { icon: '🏷️', text: 'Custom tags & filters' },
-    { icon: '📊', text: 'Progress tracking' },
-    { icon: '🌙', text: 'Premium themes' },
-    { icon: '☁️', text: 'Priority sync' },
-    { icon: '🎯', text: 'Advanced reminders (coming soon)' }
-  ]
 
-  const handleStartTrial = async () => {
-    setDebugInfo('Button clicked!')
-    console.log('[PaywallScreen] Button clicked, userId:', userId, 'email:', email)
+  const handleStartTrial = () => {
     setLoading(true)
-    setError(null)
-
-    try {
-      setDebugInfo('Building redirect URL...')
-      const paymentLink = 'https://buy.stripe.com/test_6oUdRbfEF3lbbYL7Dj4Ja00'
-      const redirectUrl = `${paymentLink}?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${userId}`
-      setDebugInfo('Redirecting to Stripe...')
-      console.log('[PaywallScreen] Redirecting to:', redirectUrl)
-      window.location.href = redirectUrl
-    } catch (err) {
-      console.error('[PaywallScreen] Error starting trial:', err)
-      setError('An error occurred. Please try again.')
-      setDebugInfo('Error: ' + (err as Error).message)
-      setLoading(false)
-    }
+    const paymentLink = 'https://buy.stripe.com/test_6oUdRbfEF3lbbYL7Dj4Ja00'
+    const redirectUrl = `${paymentLink}?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${userId}`
+    window.location.href = redirectUrl
   }
 
   return (
-    <div className="things-screen flex flex-col h-screen px-6 pt-12 pb-28 overflow-y-auto">
-      {/* GIANT TEST INDICATOR */}
-      <div className="fixed top-0 left-0 right-0 bg-red-600 text-white text-center py-2 font-bold z-50">
-        DEBUG VERSION v3 LOADED - SCROLL DOWN TO SEE BUTTONS
-      </div>
-      
+    <div className="min-h-screen flex flex-col px-6 py-12 bg-gray-50">
       {/* Progress bar */}
-      <div className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full mb-8">
-        <motion.div
-          className="h-full bg-blue-600 rounded-full"
-          initial={{ width: `${progress - 10}%` }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.3 }}
+      <div className="w-full h-1 bg-gray-200 rounded-full mb-8">
+        <div 
+          className="h-full bg-blue-600 rounded-full transition-all"
+          style={{ width: `${progress}%` }}
         />
       </div>
 
       {/* App icon */}
-      <motion.div
-        className="flex justify-center mb-6"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.1 }}
-      >
+      <div className="flex justify-center mb-6">
         <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
           <Check className="w-8 h-8 text-white" strokeWidth={3} />
         </div>
-      </motion.div>
-
-      {/* Header */}
-      <motion.div
-        className="text-center mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          Get the most out of your tasks
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Upgrade to unlock premium features
-        </p>
-      </motion.div>
-
-      {/* Premium features list */}
-      <div className="space-y-4 mb-8">
-        {premiumFeatures.map((feature, index) => (
-          <motion.div
-            key={index}
-            className="flex items-center gap-4"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 + index * 0.05 }}
-          >
-            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-xl">
-              {feature.icon}
-            </div>
-            <div className="text-gray-900 dark:text-gray-100 font-medium">
-              {feature.text}
-            </div>
-          </motion.div>
-        ))}
       </div>
 
-      {/* Pricing card */}
-      <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-6 text-white mb-6">
-        <div className="text-center">
-          <div className="text-2xl font-bold mb-2">$4.99/month</div>
-          <div className="text-sm text-blue-100">Cancel anytime</div>
-          <div className="text-xs text-blue-200 mt-2">⬇️ SCROLL DOWN FOR BUTTONS ⬇️</div>
+      {/* Header */}
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          Get the most out of your tasks
+        </h1>
+        <p className="text-gray-600">
+          Upgrade to unlock premium features
+        </p>
+      </div>
+
+      {/* Features */}
+      <div className="space-y-3 mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-xl">✨</div>
+          <div className="text-gray-900 font-medium">Unlimited projects</div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-xl">🏷️</div>
+          <div className="text-gray-900 font-medium">Custom tags & filters</div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-xl">📊</div>
+          <div className="text-gray-900 font-medium">Progress tracking</div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-xl">☁️</div>
+          <div className="text-gray-900 font-medium">Priority sync</div>
         </div>
       </div>
 
-      {/* CTA buttons */}
-      <div className="space-y-3 flex-1 flex flex-col justify-end">
-        {/* TEST BUTTON */}
-        <button
-          onClick={() => setDebugInfo('TEST button works!')}
-          className="w-full bg-red-600 text-white font-bold py-4 rounded-xl"
-        >
-          TEST CLICK ME (If this works, scroll down for real button)
-        </button>
-        
-        {debugInfo && (
-          <div className="bg-yellow-100 border border-yellow-400 text-yellow-900 px-4 py-3 rounded text-sm mb-2">
-            DEBUG: {debugInfo}
-          </div>
-        )}
-        
-        {error && (
-          <motion.p
-            className="text-center text-sm text-red-600 dark:text-red-400"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {error}
-          </motion.p>
-        )}
-
-        <button
-          onClick={handleStartTrial}
-          disabled={loading}
-          className="w-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-4 px-8 rounded-2xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Starting trial...
-            </>
-          ) : (
-            'Try Free for 7 Days'
-          )}
-        </button>
-
-        {/* Footer */}
-        <motion.p
-          className="text-center text-xs text-gray-500 dark:text-gray-400"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9 }}
-        >
-          <button className="hover:underline">Terms</button>
-          {' · '}
-          <button className="hover:underline">Privacy</button>
-        </motion.p>
-
-        {/* Powered by Stripe badge */}
-        <motion.p
-          className="text-center text-xs text-gray-400 dark:text-gray-500 mt-2 flex items-center justify-center gap-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.0 }}
-        >
-          <span>Secured by</span>
-          <svg className="h-3" viewBox="0 0 60 25" fill="currentColor">
-            <path d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a8.33 8.33 0 0 1-4.56 1.1c-4.01 0-6.83-2.5-6.83-7.48 0-4.19 2.39-7.52 6.3-7.52 3.92 0 5.96 3.28 5.96 7.5 0 .4-.04 1.03-.06 1.48zm-5.92-5.62c-1.03 0-2.17.73-2.17 2.58h4.25c0-1.85-1.07-2.58-2.08-2.58zM40.95 20.3c-1.44 0-2.32-.6-2.9-1.04l-.02 4.63-4.12.87V5.57h3.76l.08 1.02a4.7 4.7 0 0 1 3.23-1.29c2.9 0 5.62 2.6 5.62 7.4 0 5.23-2.7 7.6-5.65 7.6zM40 8.95c-.95 0-1.54.34-1.97.81l.02 6.12c.4.44.98.78 1.95.78 1.52 0 2.54-1.65 2.54-3.87 0-2.15-1.04-3.84-2.54-3.84zM28.24 5.57h4.13v14.44h-4.13V5.57zm0-4.7L32.37 0v3.36l-4.13.88V.88zm-4.32 9.35v9.79H19.8V5.57h3.7l.12 1.22c1-1.77 3.07-1.41 3.62-1.22v3.79c-.52-.17-2.29-.43-3.32.86zm-8.55 4.72c0 2.43 2.6 1.68 3.12 1.46v3.36c-.55.3-1.54.54-2.89.54a4.15 4.15 0 0 1-4.27-4.24l.01-13.17 4.02-.86v3.54h3.14V9.1h-3.13v5.85zm-4.91.7c0 2.97-2.31 4.66-5.73 4.66a11.2 11.2 0 0 1-4.46-.93v-3.93c1.38.75 3.1 1.31 4.46 1.31.92 0 1.53-.24 1.53-1C6.26 13.77 0 14.51 0 9.95 0 7.04 2.28 5.3 5.62 5.3c1.36 0 2.72.2 4.09.75v3.88a9.23 9.23 0 0 0-4.1-1.06c-.86 0-1.44.25-1.44.93 0 1.85 6.29.97 6.29 5.88z" />
-          </svg>
-        </motion.p>
+      {/* Pricing */}
+      <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-6 text-white mb-6 text-center">
+        <div className="text-2xl font-bold mb-2">$4.99/month</div>
+        <div className="text-sm text-blue-100">Cancel anytime</div>
       </div>
+
+      {/* Button */}
+      <button
+        onClick={handleStartTrial}
+        disabled={loading}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-2xl shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Starting trial...
+          </>
+        ) : (
+          'Try Free for 7 Days'
+        )}
+      </button>
+
+      {/* Footer */}
+      <p className="text-center text-xs text-gray-500 mt-6">
+        By continuing, you agree to our Terms and Privacy Policy
+      </p>
     </div>
   )
 }

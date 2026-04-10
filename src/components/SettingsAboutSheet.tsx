@@ -118,6 +118,7 @@ export function SettingsAboutSheet({ isOpen, onClose, email, userId, onSignOut }
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Settings & About</h2>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Small details that make the app feel complete.</p>
+                <p className="text-xs text-orange-600 font-bold mt-1">DEBUG v2 - userId: {userId || 'MISSING'} - subInfo: {subscriptionInfo ? 'YES' : 'NO'}</p>
               </div>
               <button
                 onClick={onClose}

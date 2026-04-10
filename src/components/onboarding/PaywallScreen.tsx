@@ -11,6 +11,7 @@ interface PaywallScreenProps {
 export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [debugInfo, setDebugInfo] = useState<string>('')
   
   const premiumFeatures = [
     { icon: '✨', text: 'Unlimited projects' },
@@ -22,17 +23,22 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
   ]
 
   const handleStartTrial = async () => {
+    setDebugInfo('Button clicked!')
+    console.log('[PaywallScreen] Button clicked, userId:', userId, 'email:', email)
     setLoading(true)
     setError(null)
 
     try {
-      // For now, use Stripe Payment Link directly
-      // TODO: Replace with dynamic checkout session once Edge Function auth is working
+      setDebugInfo('Building redirect URL...')
       const paymentLink = 'https://buy.stripe.com/test_6oUdRbfEF3lbbYL7Dj4Ja00'
-      window.location.href = `${paymentLink}?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${userId}`
+      const redirectUrl = `${paymentLink}?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${userId}`
+      setDebugInfo('Redirecting to Stripe...')
+      console.log('[PaywallScreen] Redirecting to:', redirectUrl)
+      window.location.href = redirectUrl
     } catch (err) {
-      console.error('Error starting trial:', err)
+      console.error('[PaywallScreen] Error starting trial:', err)
       setError('An error occurred. Please try again.')
+      setDebugInfo('Error: ' + (err as Error).message)
       setLoading(false)
     }
   }
@@ -111,6 +117,12 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
 
       {/* CTA buttons */}
       <div className="space-y-3 flex-1 flex flex-col justify-end">
+        {debugInfo && (
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-900 px-4 py-3 rounded text-sm mb-2">
+            DEBUG: {debugInfo}
+          </div>
+        )}
+        
         {error && (
           <motion.p
             className="text-center text-sm text-red-600 dark:text-red-400"

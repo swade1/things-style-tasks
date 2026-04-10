@@ -44,7 +44,12 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
   }
 
   return (
-    <div className="things-screen flex flex-col h-screen px-6 pt-12 pb-28">
+    <div className="things-screen flex flex-col h-screen px-6 pt-12 pb-28 overflow-y-auto">
+      {/* GIANT TEST INDICATOR */}
+      <div className="fixed top-0 left-0 right-0 bg-red-600 text-white text-center py-2 font-bold z-50">
+        DEBUG VERSION v3 LOADED - SCROLL DOWN TO SEE BUTTONS
+      </div>
+      
       {/* Progress bar */}
       <div className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full mb-8">
         <motion.div
@@ -103,17 +108,13 @@ export function PaywallScreen({ userId, email, progress }: PaywallScreenProps) {
       </div>
 
       {/* Pricing card */}
-      <motion.div
-        className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-6 text-white mb-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-      >
+      <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-6 text-white mb-6">
         <div className="text-center">
           <div className="text-2xl font-bold mb-2">$4.99/month</div>
           <div className="text-sm text-blue-100">Cancel anytime</div>
+          <div className="text-xs text-blue-200 mt-2">⬇️ SCROLL DOWN FOR BUTTONS ⬇️</div>
         </div>
-      </motion.div>
+      </div>
 
       {/* CTA buttons */}
       <div className="space-y-3 flex-1 flex flex-col justify-end">
